@@ -59,8 +59,18 @@
 </ul>
 
 <%# Inline attach form — resources, like sessions, only ever make sense
-    attached to the goal they're evidence/reference for. %>
-<%= form_with model: [@goal, Resource.new], class: "space-y-3" do |form| %>
+    attached to the goal they're evidence/reference for. @resource is only
+    set (to an invalid, unsaved record) when ResourcesController#create
+    re-renders this page after a failed attach — otherwise start fresh. %>
+<% resource = @resource || Resource.new %>
+<%= form_with model: [@goal, resource], url: goal_resources_path(@goal), class: "space-y-3" do |form| %>
+  <% if resource.errors.any? %>
+    <ul class="form-errors">
+      <% resource.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
   <div>
     <%= form.label :title, class: "label" %>
     <%= form.text_field :title, class: "input" %>

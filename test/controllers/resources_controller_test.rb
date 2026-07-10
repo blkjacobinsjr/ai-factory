@@ -19,4 +19,14 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
     assert_match "Rails Guides", response.body
     assert_match "doc", response.body
   end
+
+  test "rejects a resource with a blank title or a non-http(s) url" do
+    goal = users(:one).goals.create!(title: "Learn Rails", status: "planned")
+
+    assert_no_difference("Resource.count") do
+      post goal_resources_path(goal), params: { resource: { title: "", url: "not-a-url" } }
+    end
+    assert_response :unprocessable_entity
+    assert_select ".form-errors li", /can.t be blank/
+  end
 end

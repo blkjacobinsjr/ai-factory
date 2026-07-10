@@ -4,8 +4,17 @@
 class ResourcesController < ApplicationController
   def create
     @goal = Current.user.goals.find(params[:goal_id])
-    @goal.resources.create(resource_params)
-    redirect_to @goal
+    @resource = @goal.resources.build(resource_params)
+    if @resource.save
+      redirect_to @goal
+    else
+      # Re-render the goal page so the attach form's errors are visible —
+      # a bare redirect on failure (the original bug here) silently
+      # discards invalid input with no explanation to the user.
+      @learning_sessions = @goal.learning_sessions.order(date: :desc)
+      @resources = @goal.resources.order(created_at: :desc)
+      render "goals/show", status: :unprocessable_entity
+    end
   end
 
   def destroy
