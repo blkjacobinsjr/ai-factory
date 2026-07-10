@@ -1,0 +1,26 @@
+<div class="mb-8 flex items-center justify-between">
+  <h1 class="text-2xl font-bold tracking-tight text-gray-900">Goals</h1>
+  <%= link_to "New goal", new_goal_path, class: "btn" %>
+</div>
+
+<div class="mb-4 flex gap-2">
+  <%= link_to "All", goals_path, class: "btn-ghost" %>
+  <% Goal.statuses.each_key do |status| %>
+    <%= link_to status.tr("_", "-"), goals_path(status: status), class: "btn-ghost" %>
+  <% end %>
+</div>
+
+<ul class="space-y-3">
+  <% @goals.each do |goal| %>
+    <li class="card">
+      <div>
+        <%= link_to goal.title, goal_path(goal), class: "font-medium text-gray-900 hover:underline" %>
+        <%# Display only: the brief's literal "in-progress" has a hyphen Ruby
+            enum keys can't hold (see Goal#status comment) — swap it back
+            here, at the one place a human reads it. %>
+        <span class="phase-badge"><%= goal.status.tr("_", "-") %></span>
+      </div>
+      <%= link_to "Edit", edit_goal_path(goal), class: "btn-ghost" %>
+    </li>
+  <% end %>
+</ul>

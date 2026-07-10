@@ -1,0 +1,25 @@
+<%# Shared by new/edit, same reasoning as bookmarks/_form.html.erb — one
+    file so the two pages can't drift apart. %>
+<%= form_with model: goal, class: "space-y-5" do |form| %>
+  <% if goal.errors.any? %>
+    <ul class="form-errors">
+      <% goal.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= form.label :title, class: "label" %>
+    <%= form.text_field :title, class: "input" %>
+  </div>
+  <div>
+    <%= form.label :description, class: "label" %>
+    <%= form.text_area :description, class: "input", rows: 3 %>
+  </div>
+  <div>
+    <%= form.label :status, class: "label" %>
+    <%= form.select :status, Goal.statuses.keys, {}, class: "input" %>
+  </div>
+  <%= form.submit class: "btn" %>
+<% end %>

@@ -22,6 +22,12 @@ Rails.application.routes.draw do
   # All seven standard bookmark URLs (list/show/new/create/edit/update/delete).
   # Risk if removed: every bookmark page 404s.
   resources :bookmarks
+  resources :goals do
+    # shallow: true keeps destroy at /learning_sessions/:id — no goal_id in
+    # that URL, so (like resource :profile) there's no path shape that could
+    # even be pointed at a session under someone else's goal.
+    resources :learning_sessions, only: [:create, :destroy], shallow: true
+  end
 
   # The bookmarks list is the homepage — visiting "/" shows it directly.
   root "bookmarks#index"
