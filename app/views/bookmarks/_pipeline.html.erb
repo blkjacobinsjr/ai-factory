@@ -11,6 +11,10 @@
    ] %>
 
 <div class="pipeline">
+  <%# Live, not decorative: FactoryState reads .factory/state at render
+      time, so this badge names the phase the factory is in RIGHT NOW
+      (refresh to update). Falls back to "idle" when the file is absent. %>
+  <span class="phase-badge" title="current factory phase"><%= FactoryState.phase %></span>
   <% steps.each_with_index do |(name, detail), i| %>
     <%# Connector line BETWEEN nodes (not before the first). %>
     <% if i.positive? %><span class="connector" aria-hidden="true"></span><% end %>

@@ -71,6 +71,15 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
                     "pipeline strip must come before the bookmarks list"
   end
 
+  test "pipeline strip shows the current factory phase" do
+    # The badge must reflect .factory/state at render time — comparing
+    # against FactoryState.phase (not a literal) keeps this test valid
+    # whatever phase the factory is in while the suite runs.
+    get root_url
+
+    assert_select ".pipeline .phase-badge", text: FactoryState.phase
+  end
+
   test "GET / renders the bookmarks index" do
     # The bookmarks list IS the homepage — the app's front door.
     get root_url
