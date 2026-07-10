@@ -11,6 +11,11 @@
       <%# link_to escapes the title, so a title like "<script>" renders as
           harmless text instead of running as code. %>
       <%= link_to bookmark.title, bookmark.url %>
+      <%= link_to "Edit", edit_bookmark_path(bookmark) %>
+      <%# button_to sends a real DELETE request (a plain link can't);
+          the confirm dialog is the only guard against accidental loss. %>
+      <%= button_to "Delete", bookmark_path(bookmark), method: :delete,
+                    data: { turbo_confirm: "Are you sure?" } %>
     </li>
   <% end %>
 </ul>

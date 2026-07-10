@@ -32,4 +32,17 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to root_url
     assert_equal "Ruby on Rails Guides", bookmark.reload.title
   end
+
+  test "DELETE /bookmarks/:id removes the bookmark" do
+    bookmark = bookmarks(:rails_guides)
+
+    assert_difference("Bookmark.count", -1) do
+      delete bookmark_url(bookmark)
+    end
+    assert_redirected_to root_url
+
+    # Gone from the database AND from what the user sees on the homepage.
+    get root_url
+    assert_no_match bookmark.title, response.body
+  end
 end

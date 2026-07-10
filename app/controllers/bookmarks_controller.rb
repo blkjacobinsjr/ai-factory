@@ -44,6 +44,13 @@ class BookmarksController < ApplicationController
     end
   end
 
+  # DELETE /bookmarks/:id — remove it for good. No undo: the index button
+  # asks "Are you sure?" before the request ever reaches here.
+  def destroy
+    Bookmark.find(params[:id]).destroy
+    redirect_to root_url, notice: "Bookmark deleted."
+  end
+
   private
 
   # Only title and url may come in from the outside. Without this whitelist,
