@@ -13,6 +13,16 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     assert_select "link[rel=stylesheet][href*=?]", "tailwind"
   end
 
+  test "bookmark pages wrap content in a centered container" do
+    # The layout, not each view, owns page width/centering. All three
+    # bookmark pages must sit inside <main class="container"> — if a view
+    # escapes the wrapper, its content stretches edge-to-edge unstyled.
+    [root_url, new_bookmark_url, edit_bookmark_url(bookmarks(:rails_guides))].each do |url|
+      get url
+      assert_select "main.container", 1
+    end
+  end
+
   test "GET / renders the bookmarks index" do
     # The bookmarks list IS the homepage — the app's front door.
     get root_url
