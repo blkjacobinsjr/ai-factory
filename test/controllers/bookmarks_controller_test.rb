@@ -22,4 +22,14 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     get root_url
     assert_match "Example", response.body
   end
+
+  test "PATCH /bookmarks/:id updates the title" do
+    # Uses the fixture bookmark; only the title changes, the url must survive.
+    bookmark = bookmarks(:rails_guides)
+
+    patch bookmark_url(bookmark), params: { bookmark: { title: "Ruby on Rails Guides" } }
+
+    assert_redirected_to root_url
+    assert_equal "Ruby on Rails Guides", bookmark.reload.title
+  end
 end

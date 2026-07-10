@@ -27,6 +27,23 @@ class BookmarksController < ApplicationController
     end
   end
 
+  # GET /bookmarks/:id/edit — form pre-filled with the existing bookmark.
+  def edit
+    @bookmark = Bookmark.find(params[:id])
+  end
+
+  # PATCH /bookmarks/:id — apply the edited fields.
+  # Same success/failure split as create: home on success, redraw with
+  # errors on invalid input (e.g. blanking the title).
+  def update
+    @bookmark = Bookmark.find(params[:id])
+    if @bookmark.update(bookmark_params)
+      redirect_to root_url, notice: "Bookmark updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
   private
 
   # Only title and url may come in from the outside. Without this whitelist,
