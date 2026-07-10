@@ -24,5 +24,17 @@ Suite: green (33 tests, 126 assertions) — but green here is misleading, see F1
 Code reviewer: RECOMMEND PASS (didn't catch F1 — it only reviewed diff/tests statically; the mismatch only shows up when a real form's param shape is exercised, which is exactly what the browser drive is for).
 Security reviewer: RECOMMEND FAIL (F2).
 
-## Verdict (human's call)
-Recommendation: **FAIL** — F1 means criterion 2 doesn't actually work outside the test suite; F2 is a real crash path. Both are small, well-understood fixes.
+## Verdict round 1 (human): FAIL
+F1 (blocker) + F2 (major) + F3/F4 (minor, folded) → plan steps 6–8 → /tdd-implement re-entry.
+
+## Re-review (after fix cycles 6–8)
+- **F1 fixed** — `params.require(:user).permit(...)`; test rewritten to post the real nested shape (previously-masking flat-params test replaced, not just supplemented). Drive re-run: **sign-up now genuinely works through the real form** — `02-c2-signed-up-home.png` shows a fresh signup landing on the homepage, signed in.
+- **F2 fixed** — `validates :email_address, uniqueness: true`; new unit test proves a duplicate is a normal invalid record, not a crash.
+- **F3 fixed** — sign-up now rate-limited identically to sign-in/password-reset (10/3min).
+- **F4 fixed** — `validates :password, length: { minimum: 8 }`; new test proves a 3-char password is rejected. Side effect (expected, not a new bug): the generator's own `passwords_controller_test.rb#test_update` used a 3-char reset password — updated to a valid one, since the same rule should apply everywhere passwords are set, not just at signup.
+- **F5 fixed** — `profile_controller_test.rb` → `profiles_controller_test.rb` (pure rename).
+- Suite: 35 tests, 131 assertions, 0 failures. Full drive re-run: all 5 checks PASS, including C2 through the real form (`02-c2-signed-up-home.png`, pipeline badge correctly reads "implementing" mid-fix).
+- Scope note: no fresh reviewer fan-out for the re-review — the 3-commit delta implements exactly the reviewers' + drive's own findings.
+
+## Verdict round 2 (human's call)
+Recommendation: **PASS** — the real bug the automated suite masked is now fixed and re-verified through an actual browser sign-up, the security major is closed, and the two minor hardenings are in.
