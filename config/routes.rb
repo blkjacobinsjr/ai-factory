@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   # All seven standard bookmark URLs (list/show/new/create/edit/update/delete).
   # Risk if removed: every bookmark page 404s.
   resources :bookmarks
+  resources :goals
 
   # The bookmarks list is the homepage — visiting "/" shows it directly.
   root "bookmarks#index"

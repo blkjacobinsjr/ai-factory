@@ -10,12 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_10_170310) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_10_220957) do
   create_table "bookmarks", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "title"
     t.datetime "updated_at", null: false
     t.string "url"
+  end
+
+  create_table "goals", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.integer "status", default: 0, null: false
+    t.string "title"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_goals_on_user_id"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -45,6 +55,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_170310) do
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
+  add_foreign_key "goals", "users"
   add_foreign_key "profiles", "users"
   add_foreign_key "sessions", "users"
 end
