@@ -1,0 +1,25 @@
+<%# Sign-up form. Mirrors sessions/new.html.erb's fields (email + password)
+    but posts to sign_up_path/RegistrationsController#create instead. %>
+<h1 class="mb-6 text-2xl font-bold tracking-tight text-gray-900">Sign up</h1>
+
+<%= form_with model: @user, url: sign_up_path, class: "space-y-5" do |form| %>
+  <% if @user.errors.any? %>
+    <ul class="form-errors">
+      <% @user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <%= form.label :email_address, class: "label" %>
+    <%= form.email_field :email_address, class: "input", autofocus: true %>
+  </div>
+  <div>
+    <%= form.label :password, class: "label" %>
+    <%= form.password_field :password, class: "input", autocomplete: "new-password" %>
+  </div>
+  <%= form.submit "Sign up", class: "btn" %>
+<% end %>
+
+<%= link_to "Already have an account? Sign in", new_session_path, class: "btn-ghost mt-6" %>

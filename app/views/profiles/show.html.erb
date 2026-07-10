@@ -1,0 +1,16 @@
+<h1 class="mb-6 text-2xl font-bold tracking-tight text-gray-900">My profile</h1>
+
+<% if @profile %>
+  <div class="card flex-col items-start gap-3">
+    <p><span class="label inline">Name</span> <%= @profile.name %></p>
+    <p><span class="label inline">Cohort</span> <%= @profile.cohort %></p>
+    <div>
+      <span class="label inline">Focus areas</span>
+      <% @profile.focus_area_list.each do |tag| %>
+        <span class="btn-ghost"><%= tag %></span>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <p class="text-gray-500">No profile yet.</p>
+<% end %>

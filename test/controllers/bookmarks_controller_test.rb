@@ -4,6 +4,22 @@
 require "test_helper"
 
 class BookmarksControllerTest < ActionDispatch::IntegrationTest
+  # Every controller now requires a session by default (Rails 8's
+  # Authentication concern, included in ApplicationController). All tests
+  # below except the anonymous one need a signed-in user to reach bookmarks
+  # at all — sign_in_as comes from the generator's own test helper.
+  setup { sign_in_as users(:one) }
+
+  test "anonymous visitor is redirected to sign-in" do
+    sign_out
+    # The homepage is bookmark data — it must require a session, not just
+    # look private. Every other test in this file signs in first (see setup);
+    # this is the one that proves what happens WITHOUT signing in.
+    get root_url
+
+    assert_redirected_to new_session_path
+  end
+
   test "GET / links the tailwind stylesheet" do
     # Guards the styling foundation: if Tailwind's compiled CSS ever stops
     # being linked (gem removed, layout edited), every page silently
