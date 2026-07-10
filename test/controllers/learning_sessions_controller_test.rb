@@ -20,6 +20,21 @@ class LearningSessionsControllerTest < ActionDispatch::IntegrationTest
     assert_match "Read guides", response.body
   end
 
+  test "blocks creating a learning session under another user's goal with 404" do
+    # Covers the CREATE direction of scoping, not just destroy — goal_id
+    # here comes straight from params, so this is the one place a user
+    # could try to attach data to a goal they don't own (review finding,
+    # ticket 005 round 1: only the destroy direction had a test).
+    other_goal = users(:two).goals.create!(title: "Not yours", status: "planned")
+
+    assert_no_difference("LearningSession.count") do
+      post goal_learning_sessions_path(other_goal), params: {
+        learning_session: { date: Date.today, duration: 10 }
+      }
+    end
+    assert_response :not_found
+  end
+
   test "blocks destroying another user's learning session with 404" do
     other_goal = users(:two).goals.create!(title: "Not yours", status: "planned")
     other_session = other_goal.learning_sessions.create!(date: Date.today, duration: 30)
