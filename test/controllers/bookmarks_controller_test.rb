@@ -4,6 +4,60 @@
 require "test_helper"
 
 class BookmarksControllerTest < ActionDispatch::IntegrationTest
+  test "GET / links the tailwind stylesheet" do
+    # Guards the styling foundation: if Tailwind's compiled CSS ever stops
+    # being linked (gem removed, layout edited), every page silently
+    # degrades to unstyled HTML — this catches that as a red test.
+    get root_url
+
+    assert_select "link[rel=stylesheet][href*=?]", "tailwind"
+  end
+
+  test "bookmark pages wrap content in a centered container" do
+    # The layout, not each view, owns page width/centering. All three
+    # bookmark pages must sit inside <main class="container"> — if a view
+    # escapes the wrapper, its content stretches edge-to-edge unstyled.
+    [root_url, new_bookmark_url, edit_bookmark_url(bookmarks(:rails_guides))].each do |url|
+      get url
+      assert_select "main.container", 1
+    end
+  end
+
+  test "index renders each bookmark as a card with actions" do
+    # Pins the index's component structure: one .card per bookmark, and the
+    # card must contain everything a user needs — the link itself plus both
+    # actions. If Edit or Delete falls out of the card, users lose that action.
+    get root_url
+
+    assert_select ".card", Bookmark.count do
+      assert_select "a[href=?]", bookmarks(:rails_guides).url
+      assert_select "a", text: "Edit"
+      assert_select "button[type=submit]", text: "Delete"
+    end
+  end
+
+  test "new form uses styled input, label and button components" do
+    # Pins the form's component classes. Both fields share .input and both
+    # labels .label, so new and edit (same partial) can't drift apart, and
+    # a class rename in the CSS without a view update fails here.
+    get new_bookmark_url
+
+    assert_select "input.input#bookmark_title"
+    assert_select "input.input#bookmark_url"
+    assert_select "label.label", 2
+    assert_select "input.btn[type=submit]"
+  end
+
+  test "validation errors render inside form-errors" do
+    # The error box is the user's only explanation of a rejected submit;
+    # this pins that messages land in the styled .form-errors component
+    # rather than an unstyled list that's easy to miss.
+    post bookmarks_url, params: { bookmark: { title: "", url: "https://example.com" } }
+
+    assert_response :unprocessable_entity
+    assert_select ".form-errors li", text: /Title/
+  end
+
   test "GET / renders the bookmarks index" do
     # The bookmarks list IS the homepage — the app's front door.
     get root_url
