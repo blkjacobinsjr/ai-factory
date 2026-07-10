@@ -5,6 +5,10 @@ Rails.application.routes.draw do
   # (registration is app-specific) — this pair is the one we add.
   get  "sign_up" => "registrations#new"
   post "sign_up" => "registrations#create"
+
+  # Singular, no :id — there is no URL to edit to request someone else's
+  # profile. Current.user makes the scoping structural, not a runtime check.
+  resource :profile, only: [:show]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
