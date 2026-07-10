@@ -58,6 +58,19 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     assert_select ".form-errors li", text: /Title/
   end
 
+  test "homepage shows the 5-step pipeline strip above the list" do
+    # Pins the showcase strip: exactly the 5 factory phases, in order,
+    # rendered before the bookmark cards so it reads as a header, not a footer.
+    get root_url
+
+    assert_select ".pipeline .step", 5
+    %w[refine plan implement review merge].each do |label|
+      assert_select ".pipeline .step", text: /#{label}/
+    end
+    assert_operator response.body.index("pipeline"), :<, response.body.index("Bookmarks"),
+                    "pipeline strip must come before the bookmarks list"
+  end
+
   test "GET / renders the bookmarks index" do
     # The bookmarks list IS the homepage — the app's front door.
     get root_url

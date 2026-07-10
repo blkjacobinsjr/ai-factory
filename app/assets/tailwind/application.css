@@ -39,4 +39,25 @@
   .form-errors {
     @apply list-inside list-disc rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700;
   }
+
+  /* ── Factory pipeline strip (homepage showcase) ──
+     A row of numbered dots joined by connector lines. The Stimulus
+     controller animates by toggling is-active / is-done on .step;
+     all motion lives here in CSS so the JS stays a tiny state machine. */
+  .pipeline {
+    @apply mb-8 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm;
+  }
+  .step {
+    @apply flex flex-col items-center gap-1;
+  }
+  .step-dot {
+    @apply flex h-7 w-7 items-center justify-center rounded-full border-2 border-gray-300 bg-white text-xs font-bold text-gray-500 transition-colors duration-300;
+  }
+  .step-label {
+    @apply text-xs font-medium text-gray-500 transition-colors duration-300;
+  }
+  /* The line between dots; fills dark as the step before it completes. */
+  .connector {
+    @apply h-0.5 flex-1 rounded bg-gray-200 transition-colors duration-500;
+  }
 }
