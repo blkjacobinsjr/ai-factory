@@ -18,4 +18,14 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     get root_url
     assert_response :success
   end
+
+  test "rejects a too-short password" do
+    # has_secure_password only caps length at bcrypt's 72-char limit — a
+    # trivially guessable 3-char password is otherwise accepted as-is
+    # (review finding F4, ticket 004 round 1).
+    assert_no_difference("User.count") do
+      post sign_up_path, params: { user: { email_address: "short@example.com", password: "abc" } }
+    end
+    assert_response :unprocessable_entity
+  end
 end

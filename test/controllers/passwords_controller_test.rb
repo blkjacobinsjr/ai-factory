@@ -40,8 +40,11 @@ class PasswordsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "update" do
+    # "new" (3 chars) used to be long enough for has_secure_password alone —
+    # ticket 004 added a minimum length (review F4), so the reset password
+    # here must clear it too, same as any other password in the app.
     assert_changes -> { @user.reload.password_digest } do
-      put password_path(@user.password_reset_token), params: { password: "new", password_confirmation: "new" }
+      put password_path(@user.password_reset_token), params: { password: "newpassword", password_confirmation: "newpassword" }
       assert_redirected_to new_session_path
     end
 

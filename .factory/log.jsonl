@@ -119,3 +119,8 @@
 {"ts":"2026-07-10T23:26:37","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/models/user_test.rb","suite":"red"}
 {"ts":"2026-07-10T23:26:57","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/models/user.rb","suite":"red"}
 {"ts":"2026-07-10T23:27:49","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/models/user.rb","suite":"green"}
+{"ts":"2026-07-10T23:28:08","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/controllers/registrations_controller_test.rb","suite":"red"}
+{"ts":"2026-07-10T23:28:23","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/models/user.rb","suite":"red"}
+{"ts":"2026-07-10T23:28:41","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/controllers/registrations_controller.rb","suite":"red"}
+{"ts":"2026-07-10T23:28:51","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/controllers/registrations_controller.rb","suite":"red"}
+{"ts":"2026-07-10T23:29:35","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/controllers/passwords_controller_test.rb","suite":"green"}

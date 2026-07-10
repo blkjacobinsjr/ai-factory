@@ -11,4 +11,10 @@ class User < ApplicationRecord
   # (suspenders). normalizes above already downcases, so this is
   # effectively case-insensitive.
   validates :email_address, presence: true, uniqueness: true
+
+  # has_secure_password only enforces bcrypt's 72-char UPPER limit — without
+  # a lower bound, a 3-char password is accepted as-is (review finding F4).
+  # allow_nil: has_secure_password already requires presence on create, and
+  # a nil check here avoids double-erroring an already-blank password.
+  validates :password, length: { minimum: 8 }, allow_nil: true
 end

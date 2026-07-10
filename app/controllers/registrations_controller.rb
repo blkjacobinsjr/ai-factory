@@ -5,6 +5,10 @@
 # is signed in immediately, not sent to a separate login step.
 class RegistrationsController < ApplicationController
   allow_unauthenticated_access
+  # Matches SessionsController/PasswordsController's existing throttle —
+  # sign-up was the one unthrottled auth entry point (review finding F3).
+  rate_limit to: 10, within: 3.minutes, only: :create,
+             with: -> { redirect_to sign_up_path, alert: "Try again later." }
 
   def new
     @user = User.new
