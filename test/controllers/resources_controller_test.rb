@@ -49,6 +49,19 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Rails Guides", response.body
   end
 
+  test "rejects an out-of-range resource_type instead of crashing" do
+    # Rails enums raise ArgumentError on assignment of a value outside
+    # their defined set — a crafted POST (bypassing the <select>, e.g.
+    # via curl) with a garbage resource_type must not 500 the app
+    # (review finding F3, ticket 006 round 1 — also affects Goal#status).
+    goal = users(:one).goals.create!(title: "Learn Rails", status: "planned")
+
+    assert_no_difference("Resource.count") do
+      post goal_resources_path(goal), params: { resource: { title: "X", url: "https://example.com", resource_type: "garbage" } }
+    end
+    assert_response :bad_request
+  end
+
   test "blocks creating a resource under another user's goal with 404" do
     other_goal = users(:two).goals.create!(title: "Not yours", status: "planned")
 
