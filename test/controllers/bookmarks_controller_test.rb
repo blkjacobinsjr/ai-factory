@@ -36,6 +36,18 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "new form uses styled input, label and button components" do
+    # Pins the form's component classes. Both fields share .input and both
+    # labels .label, so new and edit (same partial) can't drift apart, and
+    # a class rename in the CSS without a view update fails here.
+    get new_bookmark_url
+
+    assert_select "input.input#bookmark_title"
+    assert_select "input.input#bookmark_url"
+    assert_select "label.label", 2
+    assert_select "input.btn[type=submit]"
+  end
+
   test "GET / renders the bookmarks index" do
     # The bookmarks list IS the homepage — the app's front door.
     get root_url

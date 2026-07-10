@@ -1,7 +1,9 @@
 <%# Shared form for creating and editing a bookmark. form_with looks at the
     record: unsaved → POST /bookmarks (create), saved → PATCH (update),
-    so both pages reuse this one file and can't drift apart. %>
-<%= form_with model: bookmark do |form| %>
+    so both pages reuse this one file and can't drift apart.
+    Component classes (.input/.label/.btn) live in
+    app/assets/tailwind/application.css and are pinned by tests. %>
+<%= form_with model: bookmark, class: "space-y-5" do |form| %>
   <%# If the last submit failed validation, say why — otherwise the user
       just sees their input vanish with no explanation. %>
   <% if bookmark.errors.any? %>
@@ -12,15 +14,13 @@
     </ul>
   <% end %>
 
-  <p>
-    <%= form.label :title %>
-    <%= form.text_field :title %>
-  </p>
-  <p>
-    <%= form.label :url %>
-    <%= form.text_field :url %>
-  </p>
-  <p>
-    <%= form.submit %>
-  </p>
+  <div>
+    <%= form.label :title, class: "label" %>
+    <%= form.text_field :title, class: "input" %>
+  </div>
+  <div>
+    <%= form.label :url, class: "label" %>
+    <%= form.text_field :url, class: "input", placeholder: "https://…" %>
+  </div>
+  <%= form.submit class: "btn" %>
 <% end %>
