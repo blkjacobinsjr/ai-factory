@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+/* shadcn-style component classes, hand-rolled with Tailwind so we need no
+   extra library (no React, no Basecoat). Views use these names (.card, .btn,
+   .input…) and the test suite asserts them — renaming a class here without
+   updating views AND tests breaks the build on purpose.
+   Tradeoff: less flexible than utilities-in-markup, but keeps ERB readable
+   and gives tests stable hooks. */
+@layer components {
+  /* A bordered white box for one bookmark. */
+  .card {
+    @apply flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm;
+  }
+
+  /* Primary action button (also styles form submits, which render as
+     <input type=submit> — hence styling by class, not element). */
+  .btn {
+    @apply inline-flex cursor-pointer items-center rounded-lg bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700;
+  }
+
+  /* Quiet secondary action (Edit, Delete, Back). */
+  .btn-ghost {
+    @apply inline-flex cursor-pointer items-center rounded-lg px-3 py-1.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900;
+  }
+}

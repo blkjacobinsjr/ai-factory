@@ -23,6 +23,19 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "index renders each bookmark as a card with actions" do
+    # Pins the index's component structure: one .card per bookmark, and the
+    # card must contain everything a user needs — the link itself plus both
+    # actions. If Edit or Delete falls out of the card, users lose that action.
+    get root_url
+
+    assert_select ".card", Bookmark.count do
+      assert_select "a[href=?]", bookmarks(:rails_guides).url
+      assert_select "a", text: "Edit"
+      assert_select "button[type=submit]", text: "Delete"
+    end
+  end
+
   test "GET / renders the bookmarks index" do
     # The bookmarks list IS the homepage — the app's front door.
     get root_url
