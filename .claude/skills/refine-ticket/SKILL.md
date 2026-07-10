@@ -1,0 +1,25 @@
+---
+name: refine-ticket
+description: Turn a rough feature idea into a ticket with test-verifiable acceptance criteria, get human approval, open the ticket branch. Use when the user gives a feature idea and phase is idle (or done).
+---
+
+# refine-ticket
+
+**Precondition:** `.factory/state` phase=idle. If not, stop and name the correct skill. WIP check: if 3 tickets already sit in `work/` unimplemented, refuse (Goldratt cap) — the constraint is the human; don't pile inventory.
+
+## Steps (READ-DO)
+1. `id` = next zero-padded number after existing `work/*` dirs (001, 002…).
+2. Draft `work/<id>/ticket.md`:
+   - **Title** (imperative, ≤8 words)
+   - **Context** (≤2 lines: why this exists)
+   - **Acceptance criteria** — 3–6, each one *verifiable by a single automated test*, phrased "Given/When/Then". No criterion may require human judgment to evaluate.
+   - **Out of scope** (explicit non-goals)
+3. Killer-item self-check before showing: every criterion test-verifiable? · fits one TDD session? · out-of-scope stated? · title matches criteria?
+4. **PAUSE (human gate):** show the full ticket text. Ask: approve / edit. Do not proceed without explicit approval; apply edits verbatim.
+5. On approval:
+   ```
+   git checkout -b ticket/<id>
+   bash .claude/hooks/set-state.sh ticket <id>
+   bash .claude/hooks/set-state.sh phase refined
+   ```
+6. Tell the user the single next command: `/plan-ticket`.
