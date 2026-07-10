@@ -1,0 +1,26 @@
+<%# Shared form for creating and editing a bookmark. form_with looks at the
+    record: unsaved → POST /bookmarks (create), saved → PATCH (update),
+    so both pages reuse this one file and can't drift apart. %>
+<%= form_with model: bookmark do |form| %>
+  <%# If the last submit failed validation, say why — otherwise the user
+      just sees their input vanish with no explanation. %>
+  <% if bookmark.errors.any? %>
+    <ul>
+      <% bookmark.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <p>
+    <%= form.label :title %>
+    <%= form.text_field :title %>
+  </p>
+  <p>
+    <%= form.label :url %>
+    <%= form.text_field :url %>
+  </p>
+  <p>
+    <%= form.submit %>
+  </p>
+<% end %>

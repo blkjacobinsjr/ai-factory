@@ -1,0 +1,21 @@
+<%# The homepage: every saved bookmark as a clickable link.
+    @bookmarks comes from BookmarksController#index. %>
+<h1>Bookmarks</h1>
+
+<%# Without this link the add-bookmark form exists but nothing points to it. %>
+<%= link_to "New bookmark", new_bookmark_path %>
+
+<ul>
+  <% @bookmarks.each do |bookmark| %>
+    <li>
+      <%# link_to escapes the title, so a title like "<script>" renders as
+          harmless text instead of running as code. %>
+      <%= link_to bookmark.title, bookmark.url %>
+      <%= link_to "Edit", edit_bookmark_path(bookmark) %>
+      <%# button_to sends a real DELETE request (a plain link can't);
+          the confirm dialog is the only guard against accidental loss. %>
+      <%= button_to "Delete", bookmark_path(bookmark), method: :delete,
+                    data: { turbo_confirm: "Are you sure?" } %>
+    </li>
+  <% end %>
+</ul>
