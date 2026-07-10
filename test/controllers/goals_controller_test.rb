@@ -32,4 +32,18 @@ class GoalsControllerTest < ActionDispatch::IntegrationTest
     get goals_path
     assert_no_match "New title", response.body
   end
+
+  test "blocks show/edit/destroy of another user's goal with 404" do
+    other_goal = users(:two).goals.create!(title: "Not yours", status: "planned")
+
+    get goal_path(other_goal)
+    assert_response :not_found
+
+    get edit_goal_path(other_goal)
+    assert_response :not_found
+
+    delete goal_path(other_goal)
+    assert_response :not_found
+    assert Goal.exists?(other_goal.id), "the other user's goal must not be touched"
+  end
 end
