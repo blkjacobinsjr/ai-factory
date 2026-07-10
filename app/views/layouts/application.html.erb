@@ -20,10 +20,16 @@
 
     <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%# Tailwind's compiled CSS (built from app/assets/tailwind/application.css
+        by the tailwindcss-rails gem — no Node involved). Remove this line and
+        every page falls back to unstyled browser-default HTML. %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
   <body>
-    <%= yield %>
+    <main class="container mx-auto mt-28 px-5 flex">
+      <%= yield %>
+    </main>
   </body>
 </html>

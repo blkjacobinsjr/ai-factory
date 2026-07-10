@@ -4,6 +4,15 @@
 require "test_helper"
 
 class BookmarksControllerTest < ActionDispatch::IntegrationTest
+  test "GET / links the tailwind stylesheet" do
+    # Guards the styling foundation: if Tailwind's compiled CSS ever stops
+    # being linked (gem removed, layout edited), every page silently
+    # degrades to unstyled HTML — this catches that as a red test.
+    get root_url
+
+    assert_select "link[rel=stylesheet][href*=?]", "tailwind"
+  end
+
   test "GET / renders the bookmarks index" do
     # The bookmarks list IS the homepage — the app's front door.
     get root_url
