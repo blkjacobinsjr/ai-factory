@@ -26,8 +26,15 @@ export default class extends Controller {
   tick() {
     this.index += 1
     if (this.index >= this.stepTargets.length) {
-      // Strip finished: leave everything green, rest, then loop.
+      // Strip finished: every step goes green (including the last one —
+      // without this, "merge" pulses forever while the caption claims the
+      // ticket merged; review finding F2). Then rest and loop.
       this.stop()
+      this.stepTargets.forEach(s => {
+        s.classList.remove("is-active")
+        s.classList.add("is-done")
+      })
+      this.syncConnectors()
       this.detailTarget.textContent = "ticket merged — back to idle"
       this.timer = setTimeout(() => this.replay(), this.REST_MS)
       return

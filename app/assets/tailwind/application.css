@@ -57,7 +57,8 @@
   .step-label {
     @apply text-xs font-medium text-gray-500 transition-colors duration-300;
   }
-  /* The line between dots; fills dark as the step before it completes. */
+  /* The line between dots; fills green as soon as the step before it is
+     running or done (the work has "reached" that connector). */
   .connector {
     @apply h-0.5 flex-1 rounded bg-gray-200 transition-colors duration-500;
   }
