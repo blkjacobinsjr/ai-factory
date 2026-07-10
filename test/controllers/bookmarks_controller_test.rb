@@ -80,6 +80,19 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     assert_select ".pipeline .phase-badge", text: FactoryState.phase
   end
 
+  test "pipeline strip is wired to the Stimulus controller" do
+    # The animation is pure client-side; what the server CAN guarantee is
+    # the contract the JS depends on: controller attachment, one target
+    # per step, a detail line per step, and a replay control. If any of
+    # these drop out, the strip silently stops animating.
+    get root_url
+
+    assert_select ".pipeline[data-controller=pipeline]"
+    assert_select ".pipeline [data-pipeline-target=step]", 5
+    assert_select ".pipeline .step[data-detail]", 5
+    assert_select ".pipeline button[data-action*=pipeline]"
+  end
+
   test "GET / renders the bookmarks index" do
     # The bookmarks list IS the homepage — the app's front door.
     get root_url

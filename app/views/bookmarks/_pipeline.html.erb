@@ -1,7 +1,10 @@
 <%# Showcase strip: this repo is built BY an AI factory, and this strip
     shows that factory's own pipeline. Purely informational — nothing here
     affects bookmarks. Steps are hardcoded: the pipeline is fixed by
-    .claude/rules/factory.md, so a config layer would be dead weight. %>
+    .claude/rules/factory.md, so a config layer would be dead weight.
+    data-controller hands the element to pipeline_controller.js, which
+    animates by toggling classes; if the JS ever fails to load, the strip
+    still renders complete and readable — it just doesn't move. %>
 <% steps = [
      ["refine",    "rough idea → test-verifiable ticket"],
      ["plan",      "research fan-out → one step per criterion"],
@@ -10,17 +13,30 @@
      ["merge",     "human verdict → PR → main"],
    ] %>
 
-<div class="pipeline">
+<div class="pipeline" data-controller="pipeline">
   <%# Live, not decorative: FactoryState reads .factory/state at render
       time, so this badge names the phase the factory is in RIGHT NOW
       (refresh to update). Falls back to "idle" when the file is absent. %>
   <span class="phase-badge" title="current factory phase"><%= FactoryState.phase %></span>
+
   <% steps.each_with_index do |(name, detail), i| %>
     <%# Connector line BETWEEN nodes (not before the first). %>
     <% if i.positive? %><span class="connector" aria-hidden="true"></span><% end %>
-    <div class="step">
+    <%# data-detail is what the controller prints in the caption below
+        while this step is "running" in the animation. %>
+    <div class="step" data-pipeline-target="step" data-detail="<%= detail %>">
       <span class="step-dot"><%= i + 1 %></span>
       <span class="step-label"><%= name %></span>
     </div>
   <% end %>
+
+  <%# Restarts the animation from step 1; the controller also autoplays
+      once on page load, so this is for "show me again". %>
+  <button type="button" class="btn-ghost" data-action="pipeline#replay" title="replay">↻</button>
+
+  <%# One-line caption on its own row (w-full wraps the flex row): the
+      active step's data-detail text. Stimulus targets must sit INSIDE the
+      data-controller element, which is why this lives in the strip.
+      aria-live lets screen readers follow the animation. %>
+  <p class="pipeline-detail" data-pipeline-target="detail" aria-live="polite"></p>
 </div>

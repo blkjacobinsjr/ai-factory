@@ -45,7 +45,8 @@
      controller animates by toggling is-active / is-done on .step;
      all motion lives here in CSS so the JS stays a tiny state machine. */
   .pipeline {
-    @apply mb-8 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm;
+    /* flex-wrap so the full-width caption row can drop below the dots. */
+    @apply mb-8 flex flex-wrap items-center gap-2 rounded-xl border border-gray-200 bg-white px-5 py-4 shadow-sm;
   }
   .step {
     @apply flex flex-col items-center gap-1;
@@ -64,4 +65,39 @@
   .phase-badge {
     @apply mr-3 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200;
   }
+
+  /* ── Animation states (toggled by pipeline_controller.js) ──
+     is-active = this step is "running" right now → dark dot + pulse ring.
+     is-done   = already finished → green dot with no pulse.
+     The pulse is a pure CSS keyframe so the JS never touches styles. */
+  .step.is-active .step-dot {
+    @apply border-gray-900 bg-gray-900 text-white;
+    animation: pipeline-pulse 1.4s ease-out infinite;
+  }
+  .step.is-active .step-label {
+    @apply text-gray-900;
+  }
+  .step.is-done .step-dot {
+    @apply border-emerald-600 bg-emerald-600 text-white;
+  }
+  .step.is-done .step-label {
+    @apply text-emerald-700;
+  }
+  .connector.is-done {
+    @apply bg-emerald-500;
+  }
+  /* Caption row under the strip showing the active step's detail text.
+     w-full forces it onto its own line inside the flex-wrap row; the
+     fixed min-height stops the strip jumping when text appears. */
+  .pipeline-detail {
+    @apply mt-2 w-full min-h-5 text-xs text-gray-500;
+    font-family: ui-monospace, monospace;
+  }
+}
+
+/* The expanding ring around the active step's dot. Kept outside @layer
+   components because it's a keyframe definition, not a class. */
+@keyframes pipeline-pulse {
+  0%   { box-shadow: 0 0 0 0 rgb(17 24 39 / 0.35); }
+  100% { box-shadow: 0 0 0 8px rgb(17 24 39 / 0); }
 }
