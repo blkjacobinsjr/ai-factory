@@ -6,6 +6,10 @@
 class GoalsController < ApplicationController
   def index
     @goals = Current.user.goals.order(created_at: :desc)
+    # params[:status] is user-supplied text; where(status: ...) on an enum
+    # attribute safely returns no rows for a value that isn't a real status,
+    # rather than raising — no separate validation needed here.
+    @goals = @goals.where(status: params[:status]) if params[:status].present?
   end
 
   def show

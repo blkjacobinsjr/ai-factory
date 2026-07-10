@@ -46,4 +46,14 @@ class GoalsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
     assert Goal.exists?(other_goal.id), "the other user's goal must not be touched"
   end
+
+  test "filters the goals index by status" do
+    users(:one).goals.create!(title: "Planned goal", status: "planned")
+    users(:one).goals.create!(title: "Active goal", status: "in_progress")
+
+    get goals_path(status: "in_progress")
+
+    assert_match "Active goal", response.body
+    assert_no_match "Planned goal", response.body
+  end
 end
