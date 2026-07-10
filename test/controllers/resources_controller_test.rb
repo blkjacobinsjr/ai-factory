@@ -29,4 +29,23 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert_select ".form-errors li", /can.t be blank/
   end
+
+  test "blocks creating a resource under another user's goal with 404" do
+    other_goal = users(:two).goals.create!(title: "Not yours", status: "planned")
+
+    assert_no_difference("Resource.count") do
+      post goal_resources_path(other_goal), params: { resource: { title: "Sneaky", url: "https://example.com" } }
+    end
+    assert_response :not_found
+  end
+
+  test "blocks destroying another user's resource with 404" do
+    other_goal = users(:two).goals.create!(title: "Not yours", status: "planned")
+    other_resource = other_goal.resources.create!(title: "Not yours either", url: "https://example.com")
+
+    delete resource_path(other_resource)
+
+    assert_response :not_found
+    assert Resource.exists?(other_resource.id), "the other user's resource must not be touched"
+  end
 end
