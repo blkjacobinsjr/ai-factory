@@ -48,6 +48,16 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     assert_select "input.btn[type=submit]"
   end
 
+  test "validation errors render inside form-errors" do
+    # The error box is the user's only explanation of a rejected submit;
+    # this pins that messages land in the styled .form-errors component
+    # rather than an unstyled list that's easy to miss.
+    post bookmarks_url, params: { bookmark: { title: "", url: "https://example.com" } }
+
+    assert_response :unprocessable_entity
+    assert_select ".form-errors li", text: /Title/
+  end
+
   test "GET / renders the bookmarks index" do
     # The bookmarks list IS the homepage — the app's front door.
     get root_url

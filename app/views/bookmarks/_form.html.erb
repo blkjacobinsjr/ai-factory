@@ -7,7 +7,7 @@
   <%# If the last submit failed validation, say why — otherwise the user
       just sees their input vanish with no explanation. %>
   <% if bookmark.errors.any? %>
-    <ul>
+    <ul class="form-errors">
       <% bookmark.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>

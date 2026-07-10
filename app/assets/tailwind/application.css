@@ -33,4 +33,10 @@
   .label {
     @apply mb-1 block text-sm font-medium text-gray-700;
   }
+
+  /* Red box listing why a submit was rejected — must stand out from the
+     form or users think their click did nothing. */
+  .form-errors {
+    @apply list-inside list-disc rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700;
+  }
 }
