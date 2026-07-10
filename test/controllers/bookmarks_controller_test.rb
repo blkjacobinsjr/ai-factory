@@ -10,4 +10,16 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
   end
+
+  test "POST /bookmarks persists a bookmark that appears on the index" do
+    # The whole write path in one pass: form submit → validation → save →
+    # redirect → the new link is actually visible on the homepage.
+    assert_difference("Bookmark.count", 1) do
+      post bookmarks_url, params: { bookmark: { title: "Example", url: "https://example.com" } }
+    end
+    assert_redirected_to root_url
+
+    get root_url
+    assert_match "Example", response.body
+  end
 end

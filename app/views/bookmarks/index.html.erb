@@ -2,6 +2,9 @@
     @bookmarks comes from BookmarksController#index. %>
 <h1>Bookmarks</h1>
 
+<%# Without this link the add-bookmark form exists but nothing points to it. %>
+<%= link_to "New bookmark", new_bookmark_path %>
+
 <ul>
   <% @bookmarks.each do |bookmark| %>
     <li>

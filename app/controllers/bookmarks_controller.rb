@@ -8,4 +8,30 @@ class BookmarksController < ApplicationController
   def index
     @bookmarks = Bookmark.order(created_at: :desc)
   end
+
+  # GET /bookmarks/new — show an empty form.
+  def new
+    @bookmark = Bookmark.new
+  end
+
+  # POST /bookmarks — try to save what the form submitted.
+  # Valid: back to the homepage where the new link now shows.
+  # Invalid: redraw the form with the error messages, keeping what was typed.
+  # (422 status tells Turbo/browsers "this submission failed".)
+  def create
+    @bookmark = Bookmark.new(bookmark_params)
+    if @bookmark.save
+      redirect_to root_url, notice: "Bookmark added."
+    else
+      render :new, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  # Only title and url may come in from the outside. Without this whitelist,
+  # a crafted request could set any column (mass assignment attack).
+  def bookmark_params
+    params.require(:bookmark).permit(:title, :url)
+  end
 end
