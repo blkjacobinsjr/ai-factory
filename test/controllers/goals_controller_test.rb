@@ -19,4 +19,17 @@ class GoalsControllerTest < ActionDispatch::IntegrationTest
     get goals_path
     assert_match "Learn Rails", response.body
   end
+
+  test "edits and deletes the signed-in user's own goal" do
+    goal = users(:one).goals.create!(title: "Old title", status: "planned")
+
+    patch goal_path(goal), params: { goal: { title: "New title" } }
+    assert_equal "New title", goal.reload.title
+
+    assert_difference("Goal.count", -1) do
+      delete goal_path(goal)
+    end
+    get goals_path
+    assert_no_match "New title", response.body
+  end
 end

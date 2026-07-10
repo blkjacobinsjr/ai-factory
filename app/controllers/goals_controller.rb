@@ -21,6 +21,24 @@ class GoalsController < ApplicationController
     end
   end
 
+  def edit
+    @goal = Current.user.goals.find(params[:id])
+  end
+
+  def update
+    @goal = Current.user.goals.find(params[:id])
+    if @goal.update(goal_params)
+      redirect_to @goal
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    Current.user.goals.find(params[:id]).destroy
+    redirect_to goals_path
+  end
+
   private
 
   def goal_params

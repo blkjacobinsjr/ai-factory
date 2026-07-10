@@ -4,7 +4,6 @@
 # user can never load a row that isn't theirs.
 class Goal < ApplicationRecord
   belongs_to :user
-  has_many :learning_sessions, dependent: :destroy
 
   # Integer-backed, not string: Ruby symbols can't hold the brief's literal
   # "in-progress" (hyphens aren't legal in identifiers), and a string column

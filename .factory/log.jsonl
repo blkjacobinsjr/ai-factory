@@ -139,3 +139,8 @@
 {"ts":"2026-07-11T00:10:51","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/views/goals/_form.html.erb","suite":"red"}
 {"ts":"2026-07-11T00:10:57","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/views/goals/new.html.erb","suite":"red"}
 {"ts":"2026-07-11T00:11:07","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/views/goals/index.html.erb","suite":"red"}
+{"ts":"2026-07-11T00:12:36","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/controllers/goals_controller_test.rb","suite":"red"}
+{"ts":"2026-07-11T00:12:52","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/controllers/goals_controller_test.rb","suite":"red"}
+{"ts":"2026-07-11T00:13:13","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/controllers/goals_controller.rb","suite":"red"}
+{"ts":"2026-07-11T00:13:22","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/views/goals/edit.html.erb","suite":"red"}
+{"ts":"2026-07-11T00:13:53","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/models/goal.rb","suite":"green"}
