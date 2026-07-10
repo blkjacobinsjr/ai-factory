@@ -58,6 +58,44 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     assert_select ".form-errors li", text: /Title/
   end
 
+  test "homepage shows the 5-step pipeline strip above the list" do
+    # Pins the showcase strip: exactly the 5 factory phases, in order,
+    # rendered before the bookmark cards so it reads as a header, not a footer.
+    get root_url
+
+    assert_select ".pipeline .step", 5
+    # Labels must appear in pipeline ORDER, not merely exist somewhere.
+    assert_equal %w[refine plan implement review merge],
+                 css_select(".pipeline .step-label").map(&:text)
+    # Anchor on the strip's class attribute: a bare "pipeline" search would
+    # match "controllers/pipeline_controller" in the <head> importmap and
+    # pass even with the strip below the list (review F1, ticket 003).
+    assert_operator response.body.index('class="pipeline"'), :<, response.body.index("Bookmarks"),
+                    "pipeline strip must come before the bookmarks list"
+  end
+
+  test "pipeline strip shows the current factory phase" do
+    # The badge must reflect .factory/state at render time — comparing
+    # against FactoryState.phase (not a literal) keeps this test valid
+    # whatever phase the factory is in while the suite runs.
+    get root_url
+
+    assert_select ".pipeline .phase-badge", text: FactoryState.phase
+  end
+
+  test "pipeline strip is wired to the Stimulus controller" do
+    # The animation is pure client-side; what the server CAN guarantee is
+    # the contract the JS depends on: controller attachment, one target
+    # per step, a detail line per step, and a replay control. If any of
+    # these drop out, the strip silently stops animating.
+    get root_url
+
+    assert_select ".pipeline[data-controller=pipeline]"
+    assert_select ".pipeline [data-pipeline-target=step]", 5
+    assert_select ".pipeline .step[data-detail]", 5
+    assert_select ".pipeline button[data-action*=pipeline]"
+  end
+
   test "GET / renders the bookmarks index" do
     # The bookmarks list IS the homepage — the app's front door.
     get root_url
