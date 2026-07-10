@@ -34,6 +34,21 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
     assert_select ".form-errors li", /can.t be blank/
   end
 
+  test "deletes the signed-in user's own resource" do
+    # The old bookmarks_controller_test.rb had this exact coverage for
+    # Bookmark; it wasn't rebuilt for Resource (review finding F2).
+    goal = users(:one).goals.create!(title: "Learn Rails", status: "planned")
+    resource = goal.resources.create!(title: "Rails Guides", url: "https://guides.rubyonrails.org")
+
+    assert_difference("Resource.count", -1) do
+      delete resource_path(resource)
+    end
+    assert_redirected_to goal_path(goal)
+
+    get goal_path(goal)
+    assert_no_match "Rails Guides", response.body
+  end
+
   test "blocks creating a resource under another user's goal with 404" do
     other_goal = users(:two).goals.create!(title: "Not yours", status: "planned")
 
