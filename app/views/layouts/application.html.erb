@@ -18,12 +18,12 @@
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
-    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
-    <%# Tailwind's compiled CSS (built from app/assets/tailwind/application.css
-        by the tailwindcss-rails gem — no Node involved). Remove this line and
+    <%# stylesheet_link_tag :app already auto-includes the compiled Tailwind
+        build (app/assets/builds/tailwind.css) in Rails 8.1 — a separate,
+        manual "tailwind" tag here was a duplicate of the same file (issue
+        #10), not a second real stylesheet. Remove this line entirely and
         every page falls back to unstyled browser-default HTML. %>
-    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 

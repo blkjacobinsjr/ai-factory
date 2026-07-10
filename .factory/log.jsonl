@@ -183,3 +183,6 @@
 {"ts":"2026-07-11T00:35:56","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/controllers/resources_controller.rb","suite":"red"}
 {"ts":"2026-07-11T00:36:13","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/views/goals/show.html.erb","suite":"green"}
 {"ts":"2026-07-11T00:36:50","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/controllers/resources_controller_test.rb","suite":"green"}
+{"ts":"2026-07-11T00:37:49","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/controllers/goals_controller_test.rb","suite":"red"}
+{"ts":"2026-07-11T00:38:19","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/controllers/goals_controller_test.rb","suite":"red"}
+{"ts":"2026-07-11T00:38:39","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/views/layouts/application.html.erb","suite":"green"}
