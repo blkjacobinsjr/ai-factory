@@ -20,8 +20,9 @@ description: Independent verification — parallel reviewer agents plus a Playwr
    ```
    bash .claude/hooks/set-state.sh verdict PASS   # opens the push gate
    git push -u origin ticket/<id>
-   gh pr create --fill
+   gh pr create --fill --body "Closes #<issue>. $(see PR handoff below)"
    ```
+   The PR body must start with `Closes #<issue-number>` (from ticket.md's GitHub line) so ticket and PR are linked on GitHub and the issue auto-closes on merge.
    Then hand off exactly: `Pushed — please review: <PR URL>` + 3 bullets *what changed* + 3 bullets *what to look out for* (risk spots, tradeoffs taken, decisions that are the human's), written for a reader who won't parse the syntax.
 6. **On FAIL (OODA re-orientation):** convert each finding into a new step in plan.md, `set-state verdict FAIL`, `set-state phase planned`, route back to `/tdd-implement`. Never patch ad-hoc.
 7. **After the human merges:** append a row to `.factory/metrics.md` (cycles, review fails, merged ✓), then `git checkout main && git pull`, `set-state phase idle`, `set-state ticket ""`, `set-state verdict ""`.

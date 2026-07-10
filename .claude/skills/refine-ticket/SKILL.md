@@ -19,7 +19,9 @@ description: Turn a rough feature idea into a ticket with test-verifiable accept
 5. On approval:
    ```
    git checkout -b ticket/<id>
+   gh issue create --title "<title>" --body-file work/<id>/ticket.md
    bash .claude/hooks/set-state.sh ticket <id>
    bash .claude/hooks/set-state.sh phase refined
    ```
+   Record the issue URL at the top of ticket.md (`GitHub: <url>`) and give the user the link — the ticket is now visible on GitHub, not only in local files.
 6. Tell the user the single next command: `/plan-ticket`.
