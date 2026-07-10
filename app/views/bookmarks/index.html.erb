@@ -1,0 +1,13 @@
+<%# The homepage: every saved bookmark as a clickable link.
+    @bookmarks comes from BookmarksController#index. %>
+<h1>Bookmarks</h1>
+
+<ul>
+  <% @bookmarks.each do |bookmark| %>
+    <li>
+      <%# link_to escapes the title, so a title like "<script>" renders as
+          harmless text instead of running as code. %>
+      <%= link_to bookmark.title, bookmark.url %>
+    </li>
+  <% end %>
+</ul>
