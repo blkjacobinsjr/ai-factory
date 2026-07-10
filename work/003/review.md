@@ -23,5 +23,15 @@ Animation behavior (out of criteria, in the issue's intent): sequential activati
 
 Security reviewer: PASS — no unsafe DOM sinks (textContent/classList only), phase value HTML-escaped, data-details are hardcoded literals, no injection paths.
 
-## Verdict (human's call)
-Recommendation: **FAIL** — F1 leaves part of a criterion unverified and F2 is visible to every visitor. Both are small: F1 is a test-only fix, F2 is ~3 lines of JS, F3+F4 ride along. One re-entry into /tdd-implement (steps 5–7 appended to plan.md), then re-review.
+## Verdict round 1 (human): FAIL
+F1/F2 majors + F3/F4 minors → plan steps 5–7 → /tdd-implement re-entry.
+
+## Re-review (after fix cycles 5–7)
+- **F1 fixed** — position assertion anchored on `class="pipeline"`, labels asserted in order via `css_select`; suite green (16 tests, 54 assertions).
+- **F2 fixed** — finish branch marks all steps `is-done`; full drive re-run: **all 14 checks PASS** including `ANIM: full run completes` and `REPLAY: restarts from step 1`. Evidence: `04-anim-complete.png` (all-green strip + completion caption), `05-replay.png`.
+- **F3 fixed** — new red→green unit test (EISDIR via directory path); rescue widened to `SystemCallError`.
+- **F4 fixed** — stale CSS comment corrected.
+- Scope note: no fresh reviewer fan-out for the re-review — the 3-commit delta implements exactly the reviewers' own findings, nothing new entered scope. (Token-frugality call; flag if you want a full re-fan-out.)
+
+## Verdict round 2 (human's call)
+Recommendation: **PASS** — all 4 criteria verified by strengthened tests, animation verified end-to-end in the browser including completion and replay.
