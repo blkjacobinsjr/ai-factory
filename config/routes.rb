@@ -19,16 +19,14 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
-  # All seven standard bookmark URLs (list/show/new/create/edit/update/delete).
-  # Risk if removed: every bookmark page 404s.
-  resources :bookmarks
   resources :goals do
-    # shallow: true keeps destroy at /learning_sessions/:id — no goal_id in
-    # that URL, so (like resource :profile) there's no path shape that could
-    # even be pointed at a session under someone else's goal.
+    # shallow: true keeps destroy at /learning_sessions/:id (and
+    # /resources/:id below) — no goal_id in that URL, so there's no path
+    # shape that could even be pointed at a record under someone else's goal.
     resources :learning_sessions, only: [:create, :destroy], shallow: true
+    resources :resources, only: [:create, :destroy], shallow: true
   end
 
-  # The bookmarks list is the homepage — visiting "/" shows it directly.
-  root "bookmarks#index"
+  # The goals index is the homepage.
+  root "goals#index"
 end

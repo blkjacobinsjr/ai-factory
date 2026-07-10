@@ -1,7 +1,0 @@
-# Test fixture: one known-good bookmark, loaded into the test database
-# before every test run. Update/delete tests reuse this record instead of
-# creating their own. If its data ever violates the model's validations,
-# those tests become misleading — keep it valid.
-rails_guides:
-  title: Rails Guides
-  url: https://guides.rubyonrails.org
