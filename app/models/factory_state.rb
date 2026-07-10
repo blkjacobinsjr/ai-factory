@@ -13,7 +13,9 @@ class FactoryState
     line = File.foreach(path).find { |l| l.start_with?("phase=") }
     value = line&.split("=", 2)&.last&.strip
     value.presence || "idle"
-  rescue Errno::ENOENT
+  rescue SystemCallError
+    # Any filesystem problem — missing, unreadable, a directory — degrades
+    # to "idle". The strip is decoration; it must never take the page down.
     "idle"
   end
 end

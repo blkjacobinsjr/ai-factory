@@ -84,3 +84,5 @@
 {"ts":"2026-07-10T15:42:56","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/controllers/bookmarks_controller_test.rb","suite":"green"}
 {"ts":"2026-07-10T15:43:23","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/javascript/controllers/pipeline_controller.js","suite":"green"}
 {"ts":"2026-07-10T15:43:27","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/assets/tailwind/application.css","suite":"green"}
+{"ts":"2026-07-10T15:43:51","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/models/factory_state_test.rb","suite":"red"}
+{"ts":"2026-07-10T15:44:14","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/models/factory_state.rb","suite":"green"}

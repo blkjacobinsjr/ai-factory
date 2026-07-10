@@ -16,4 +16,11 @@ class FactoryStateTest < ActiveSupport::TestCase
     # (it's a dev-machine artifact), and the homepage still has to render.
     assert_equal "idle", FactoryState.phase("/nonexistent/state")
   end
+
+  test "any unreadable path falls back to idle instead of crashing" do
+    # A directory (EISDIR) stands in for the whole family of filesystem
+    # errors (permissions, etc.) — none of them may 500 the homepage,
+    # because the strip is decoration, not a dependency. (Review F3.)
+    assert_equal "idle", FactoryState.phase(Dir.tmpdir)
+  end
 end
