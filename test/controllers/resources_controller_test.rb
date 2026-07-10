@@ -17,7 +17,11 @@ class ResourcesControllerTest < ActionDispatch::IntegrationTest
 
     get goal_path(goal)
     assert_match "Rails Guides", response.body
-    assert_match "doc", response.body
+    # Asserting the badge ELEMENT, not just the word "doc" anywhere on the
+    # page — the attach form's own <select> always contains that word as
+    # an option, so a plain text match would pass even with no badge
+    # rendered at all (review finding F1, ticket 006 round 1).
+    assert_select ".phase-badge", text: "doc"
   end
 
   test "rejects a resource with a blank title or a non-http(s) url" do

@@ -40,6 +40,24 @@
 - Implementation: `config/routes.rb` — `root "goals#index"`; `goals/index.html.erb` — render `"pipeline"` partial at top; `app/views/layouts/application.html.erb` — remove the manual `stylesheet_link_tag "tailwind"` line (Rails 8.1's `stylesheet_link_tag :app` already auto-includes the compiled Tailwind build — confirmed by ticket 002's own review finding; the manual tag was the duplicate)
 - Commit: `ticket-006: root moves to goals index, dedupe tailwind link (closes #10)`
 
+## Re-orientation steps (from review FAIL — work/006/review.md)
+
+### Step 5 → finding F1 (vacuous badge assertion; test-only)
+- Test change: `resources_controller_test.rb` — `assert_select ".phase-badge", text: "doc"` instead of `assert_match "doc", response.body`
+- Expected failure: **should still pass** (the badge genuinely renders) — this step exists to prove the assertion is meaningful, not to fix a real bug; if it somehow fails, that itself would be the real finding
+- Commit: `ticket-006: assert the resource badge element, not incidental page text`
+
+### Step 6 → finding F2 (missing happy-path destroy test)
+- Test: `resources_controller_test.rb` — `test "deletes the signed-in user's own resource"` (create, `assert_difference("Resource.count", -1) { delete resource_path(resource) }`, then confirm it's gone from the goal page)
+- Expected failure: **may already be green** — `ResourcesController#destroy` was implemented in step 1; this closes a coverage gap, not a behavior gap
+- Commit: `ticket-006: verify a user can delete their own resource`
+
+### Step 7 → finding F3 (enum assignment crashes on invalid value — affects Resource AND Goal)
+- Test: `resources_controller_test.rb` — `test "rejects an out-of-range resource_type instead of crashing"` (POST with `resource_type: "garbage"`, `assert_response :bad_request` or `:unprocessable_entity`, no 500)
+- Expected failure: `ArgumentError` propagates unhandled (confirmed via `bin/rails runner`)
+- Implementation: `ApplicationController` — `rescue_from ArgumentError` converting to a clean 4xx response. Single shared fix covers `ResourcesController` (this ticket) AND `GoalsController` (ticket 005, already merged, same latent bug — confirmed independently: `goals.build(status: "garbage")` also raises). Out-of-ticket-scope model gets protected as a side effect of the correct fix location, not extra surface area touched.
+- Commit: `ticket-006: convert invalid enum values into clean 4xx responses (also fixes ticket 005's Goal#status)`
+
 ## Research notes
 - `type` is a reserved ActiveRecord column name (triggers Single Table Inheritance) — the enum column is `resource_type`, not `type`, even though the brief says "type."
 - `main.container` and the Tailwind link both live in the shared layout, not per-view — no per-page work needed for the container assertion, only the stylesheet-link count (issue #10's actual bug).
