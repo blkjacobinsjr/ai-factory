@@ -3,7 +3,7 @@
 # signed in as one user, another user's data must never appear on the page.
 require "test_helper"
 
-class ProfileControllerTest < ActionDispatch::IntegrationTest
+class ProfilesControllerTest < ActionDispatch::IntegrationTest
   setup do
     @own_user = users(:one)
     @own_user.create_profile!(name: "Ada Lovelace", cohort: "2026-A", focus_areas: "ruby, rails")

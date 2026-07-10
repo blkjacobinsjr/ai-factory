@@ -40,6 +40,26 @@
 - Implementation: route `resource :profile, only: [:show]` (singular, no `:id` — there is no URL parameter to swap to see another user's profile, which is what makes the scoping structural rather than a runtime check); `ProfileController#show` (`@profile = Current.user.profile`); `app/views/profile/show.html.erb` (name, cohort, focus_areas split into badge-styled tags reusing `.btn-ghost`)
 - Commit: `ticket-004: profile page scoped to the signed-in user`
 
+## Re-orientation steps (from review FAIL — work/004/review.md)
+
+### Step 6 → finding F1 (sign-up broken through the real form; blocker)
+- Test: rewrite `registrations_controller_test.rb` to post through the SAME nested shape `form_with model: @user` actually generates — `post sign_up_path, params: { user: { email_address:, password: } }` — this is what exposes the bug (flat params were masking it)
+- Expected failure: 422 "Unpermitted parameters" (reproduces the real-world break)
+- Implementation: `registrations_controller.rb` — `params.require(:user).permit(:email_address, :password)`. Fold in F5 (rename `test/controllers/profile_controller_test.rb` → `profiles_controller_test.rb`, pure rename, no behavior change, no separate step needed)
+- Commit: `ticket-004: fix sign-up param nesting (real form was broken)`
+
+### Step 7 → finding F2 (crash on duplicate email; major)
+- Test: `test/models/user_test.rb` (generator-provided, extend) — `test "is invalid with a duplicate email address"` (create one user, attempt a second with the same email, assert `invalid?` + error on `:email_address`, NOT an exception)
+- Expected failure: `ActiveRecord::RecordNotUnique` raised instead of a normal validation failure
+- Implementation: `app/models/user.rb` — `validates :email_address, presence: true, uniqueness: true` (normalizes already downcases, so this is effectively case-insensitive)
+- Commit: `ticket-004: User requires a unique email address`
+
+### Step 8 → findings F3+F4 (unthrottled sign-up + no minimum password length; minor, folded)
+- Test: `registrations_controller_test.rb` — two cheap additions: a `rate_limit`-style throttle isn't unit-testable without time travel, so this step covers only F4: `test "rejects a too-short password"` (3-char password → 422, error on `:password`)
+- Expected failure: 3-char password currently succeeds
+- Implementation: `app/models/user.rb` — `validates :password, length: { minimum: 8 }, allow_nil: true` (has_secure_password already requires presence on create); `registrations_controller.rb` — add `rate_limit to: 10, within: 3.minutes, only: :create, with: -> { redirect_to new_sign_up_path, alert: "Try again later." }` matching SessionsController's existing pattern (not separately unit-tested — same untested-by-design as the existing rate limits on Sessions/Passwords)
+- Commit: `ticket-004: harden sign-up (min password length, rate limit)`
+
 ## Research notes
 - Rails 8.1.3's `generate authentication` produces User/Session/Current/SessionsController/PasswordsController/Authentication concern, wires `before_action :require_authentication` into `ApplicationController` (global by default — opt out per-action via `allow_unauthenticated_access`), and ships its own `sign_in_as` test helper + `users.yml` fixture (password `"password"`). Deliberately excludes sign-up (confirmed: no RegistrationsController, no view, no route) — that's on us.
 - `Current.user` is already public (delegates to `Current.session.user`); no extra plumbing needed to read "the signed-in user" anywhere in the app.

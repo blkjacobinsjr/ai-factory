@@ -11,7 +11,11 @@ class RegistrationsController < ApplicationController
   end
 
   def create
-    @user = User.new(params.permit(:email_address, :password))
+    # form_with model: @user (app/views/registrations/new.html.erb) posts
+    # params nested under "user" — a flat params.permit(:email_address,
+    # :password) reads the wrong keys and 422s the real form even though a
+    # test posting flat params directly would wrongly pass (review F1).
+    @user = User.new(params.require(:user).permit(:email_address, :password))
     if @user.save
       start_new_session_for @user
       redirect_to root_path
