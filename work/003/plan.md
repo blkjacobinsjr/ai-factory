@@ -32,6 +32,23 @@
 - Implementation: `app/javascript/controllers/pipeline_controller.js` (~60 lines: on connect, step through nodes on an interval adding `is-active`/`is-done` classes, show active step's `data-detail` text, loop after a pause; `replay()` action restarts; interval cleared on disconnect) + data attributes and replay button in `_pipeline.html.erb` + animation CSS (`.step.is-active` pulse ring via CSS keyframes, connector fill via `.is-done`)
 - Commit: `ticket-003: Stimulus pipeline animation`
 
+## Re-orientation steps (from review FAIL — work/003/review.md)
+
+### Step 5 → finding F1 (vacuous position assertion; test-only)
+- Test change: `bookmarks_controller_test.rb` — anchor the position check on `'class="pipeline"'` (not bare `"pipeline"`, which matches the importmap in `<head>`), and assert the 5 labels appear in pipeline order within the strip
+- "Red" proof: temporarily verify the OLD assertion can't fail (documented in review); new assertion must still pass against current (correct) markup
+- Commit: `ticket-003: fix vacuous strip-position assertion`
+
+### Step 6 → finding F2 (animation never completes)
+- No unit test possible (JS runtime; out of ticket criteria) — verification is the review-phase browser drive (`ANIM: full run completes` + `REPLAY` checks, currently failing)
+- Implementation: `pipeline_controller.js` finish branch — before resting, remove `is-active` from all steps, add `is-done` to all, `syncConnectors()`; then caption + rest + loop. Fix stale CSS comment (F4) in the same file pass
+- Commit: `ticket-003: animation completes to all-green before looping`
+
+### Step 7 → finding F3 (FactoryState 500s on EISDIR/EACCES)
+- Test: `factory_state_test.rb` — `FactoryState.phase(dir_path)` returns `"idle"` (a directory raises EISDIR on read today → red)
+- Implementation: rescue `SystemCallError` (parent of all Errno) instead of only `Errno::ENOENT`
+- Commit: `ticket-003: FactoryState never crashes the homepage`
+
 ## Research notes
 - `eagerLoadControllersFrom` + `pin_all_from "app/javascript/controllers"` → `pipeline_controller.js` self-registers as `pipeline`; zero manifest edits.
 - Zeitwerk autoloads plain POROs from `app/models/`; `FactoryState` unit test needs no fixtures.

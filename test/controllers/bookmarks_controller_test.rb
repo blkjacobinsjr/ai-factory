@@ -64,10 +64,13 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     get root_url
 
     assert_select ".pipeline .step", 5
-    %w[refine plan implement review merge].each do |label|
-      assert_select ".pipeline .step", text: /#{label}/
-    end
-    assert_operator response.body.index("pipeline"), :<, response.body.index("Bookmarks"),
+    # Labels must appear in pipeline ORDER, not merely exist somewhere.
+    assert_equal %w[refine plan implement review merge],
+                 css_select(".pipeline .step-label").map(&:text)
+    # Anchor on the strip's class attribute: a bare "pipeline" search would
+    # match "controllers/pipeline_controller" in the <head> importmap and
+    # pass even with the strip below the list (review F1, ticket 003).
+    assert_operator response.body.index('class="pipeline"'), :<, response.body.index("Bookmarks"),
                     "pipeline strip must come before the bookmarks list"
   end
 
