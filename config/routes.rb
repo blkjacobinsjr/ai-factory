@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   resource :session
   resources :passwords, param: :token
+  # Rails 8's authentication generator deliberately ships no sign-up flow
+  # (registration is app-specific) — this pair is the one we add.
+  get  "sign_up" => "registrations#new"
+  post "sign_up" => "registrations#create"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
