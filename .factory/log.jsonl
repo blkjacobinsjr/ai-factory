@@ -145,3 +145,12 @@
 {"ts":"2026-07-11T00:13:22","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/views/goals/edit.html.erb","suite":"red"}
 {"ts":"2026-07-11T00:13:53","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/models/goal.rb","suite":"green"}
 {"ts":"2026-07-11T00:14:25","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/controllers/goals_controller_test.rb","suite":"green"}
+{"ts":"2026-07-11T00:15:19","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/test/controllers/learning_sessions_controller_test.rb","suite":"red"}
+{"ts":"2026-07-11T00:15:45","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/models/learning_session.rb","suite":"red"}
+{"ts":"2026-07-11T00:15:56","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/models/goal.rb","suite":"red"}
+{"ts":"2026-07-11T00:16:06","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/models/user.rb","suite":"red"}
+{"ts":"2026-07-11T00:16:15","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/config/routes.rb","suite":"red"}
+{"ts":"2026-07-11T00:16:27","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/controllers/goals_controller.rb","suite":"red"}
+{"ts":"2026-07-11T00:16:38","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/controllers/learning_sessions_controller.rb","suite":"red"}
+{"ts":"2026-07-11T00:16:52","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/views/goals/show.html.erb","suite":"red"}
+{"ts":"2026-07-11T00:17:09","path":"/Users/mymac/Documents/GitHub/spiced/ai-factory/app/views/goals/show.html.erb","suite":"green"}

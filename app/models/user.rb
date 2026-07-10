@@ -3,6 +3,9 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_one :profile, dependent: :destroy
   has_many :goals, dependent: :destroy
+  # Lets LearningSessionsController scope by Current.user.learning_sessions
+  # (through the goals association) the same way Goal itself is scoped.
+  has_many :learning_sessions, through: :goals
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

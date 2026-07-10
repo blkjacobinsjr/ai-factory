@@ -1,0 +1,47 @@
+<div class="mb-6 flex items-start justify-between">
+  <div>
+    <h1 class="text-2xl font-bold tracking-tight text-gray-900"><%= @goal.title %></h1>
+    <p class="text-gray-500"><%= @goal.description %></p>
+    <span class="phase-badge"><%= @goal.status.tr("_", "-") %></span>
+  </div>
+  <%= link_to "Edit", edit_goal_path(@goal), class: "btn-ghost" %>
+</div>
+
+<h2 class="mb-3 text-lg font-semibold text-gray-900">Learning sessions</h2>
+<ul class="mb-6 space-y-3">
+  <% @learning_sessions.each do |session| %>
+    <li class="card flex-col items-start gap-1">
+      <div class="flex w-full items-center justify-between">
+        <span class="font-medium"><%= session.date %> — <%= session.duration %> min</span>
+        <%= button_to "Remove", learning_session_path(session), method: :delete,
+                      class: "btn-ghost", data: { turbo_confirm: "Are you sure?" } %>
+      </div>
+      <p class="text-sm text-gray-600"><%= session.notes %></p>
+      <p class="text-xs text-gray-400"><%= session.tags %></p>
+    </li>
+  <% end %>
+</ul>
+
+<%# Inline add form — no separate "new session" page; a session only ever
+    makes sense in the context of the goal it's logged against. %>
+<%= form_with model: [@goal, LearningSession.new], class: "space-y-3" do |form| %>
+  <div>
+    <%= form.label :date, class: "label" %>
+    <%= form.date_field :date, class: "input" %>
+  </div>
+  <div>
+    <%= form.label :duration, "Duration (minutes)", class: "label" %>
+    <%= form.number_field :duration, class: "input" %>
+  </div>
+  <div>
+    <%= form.label :notes, class: "label" %>
+    <%= form.text_area :notes, class: "input", rows: 2 %>
+  </div>
+  <div>
+    <%= form.label :tags, class: "label" %>
+    <%= form.text_field :tags, class: "input" %>
+  </div>
+  <%= form.submit "Log session", class: "btn" %>
+<% end %>
+
+<%= link_to "Back to goals", goals_path, class: "btn-ghost mt-6" %>

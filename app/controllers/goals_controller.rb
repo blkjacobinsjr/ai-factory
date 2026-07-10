@@ -8,6 +8,11 @@ class GoalsController < ApplicationController
     @goals = Current.user.goals.order(created_at: :desc)
   end
 
+  def show
+    @goal = Current.user.goals.find(params[:id])
+    @learning_sessions = @goal.learning_sessions.order(date: :desc)
+  end
+
   def new
     @goal = Current.user.goals.build
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_10_220957) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_10_221512) do
   create_table "bookmarks", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "title"
@@ -26,6 +26,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_220957) do
     t.datetime "updated_at", null: false
     t.integer "user_id", null: false
     t.index ["user_id"], name: "index_goals_on_user_id"
+  end
+
+  create_table "learning_sessions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "date"
+    t.integer "duration"
+    t.integer "goal_id", null: false
+    t.text "notes"
+    t.string "tags"
+    t.datetime "updated_at", null: false
+    t.index ["goal_id"], name: "index_learning_sessions_on_goal_id"
   end
 
   create_table "profiles", force: :cascade do |t|
@@ -56,6 +67,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_10_220957) do
   end
 
   add_foreign_key "goals", "users"
+  add_foreign_key "learning_sessions", "goals"
   add_foreign_key "profiles", "users"
   add_foreign_key "sessions", "users"
 end
