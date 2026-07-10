@@ -1,10 +1,11 @@
 # A learning objective a user is tracking. The first model in this app
-# that's genuinely private per user (Bookmark is shared/global) — every
-# lookup goes through Current.user.goals, never Goal.find directly, so a
-# user can never load a row that isn't theirs.
+# that's genuinely private per user — every lookup goes through
+# Current.user.goals, never Goal.find directly, so a user can never load
+# a row that isn't theirs.
 class Goal < ApplicationRecord
   belongs_to :user
   has_many :learning_sessions, dependent: :destroy
+  has_many :resources, dependent: :destroy
 
   # Integer-backed, not string: Ruby symbols can't hold the brief's literal
   # "in-progress" (hyphens aren't legal in identifiers), and a string column

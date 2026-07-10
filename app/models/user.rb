@@ -6,6 +6,9 @@ class User < ApplicationRecord
   # Lets LearningSessionsController scope by Current.user.learning_sessions
   # (through the goals association) the same way Goal itself is scoped.
   has_many :learning_sessions, through: :goals
+  # Same scoping pattern for ResourcesController#destroy (shallow route,
+  # no goal_id in the URL).
+  has_many :resources, through: :goals
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

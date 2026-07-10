@@ -44,4 +44,46 @@
   <%= form.submit "Log session", class: "btn" %>
 <% end %>
 
+<h2 class="mb-3 text-lg font-semibold text-gray-900">Resources</h2>
+<ul class="mb-6 space-y-3">
+  <% @resources.each do |resource| %>
+    <li class="card">
+      <div>
+        <%= link_to resource.title, resource.url, class: "font-medium text-gray-900 hover:underline" %>
+        <span class="phase-badge"><%= resource.resource_type %></span>
+      </div>
+      <%= button_to "Remove", resource_path(resource), method: :delete,
+                    class: "btn-ghost", data: { turbo_confirm: "Are you sure?" } %>
+    </li>
+  <% end %>
+</ul>
+
+<%# Inline attach form — resources, like sessions, only ever make sense
+    attached to the goal they're evidence/reference for. @resource is only
+    set (to an invalid, unsaved record) when ResourcesController#create
+    re-renders this page after a failed attach — otherwise start fresh. %>
+<% resource = @resource || Resource.new %>
+<%= form_with model: [@goal, resource], url: goal_resources_path(@goal), class: "space-y-3" do |form| %>
+  <% if resource.errors.any? %>
+    <ul class="form-errors">
+      <% resource.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <div>
+    <%= form.label :title, class: "label" %>
+    <%= form.text_field :title, class: "input" %>
+  </div>
+  <div>
+    <%= form.label :url, class: "label" %>
+    <%= form.text_field :url, class: "input", placeholder: "https://…" %>
+  </div>
+  <div>
+    <%= form.label :resource_type, "Type", class: "label" %>
+    <%= form.select :resource_type, Resource.resource_types.keys, {}, class: "input" %>
+  </div>
+  <%= form.submit "Attach resource", class: "btn" %>
+<% end %>
+
 <%= link_to "Back to goals", goals_path, class: "btn-ghost mt-6" %>

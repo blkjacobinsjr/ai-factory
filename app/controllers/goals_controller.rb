@@ -15,6 +15,7 @@ class GoalsController < ApplicationController
   def show
     @goal = Current.user.goals.find(params[:id])
     @learning_sessions = @goal.learning_sessions.order(date: :desc)
+    @resources = @goal.resources.order(created_at: :desc)
   end
 
   def new
