@@ -20,3 +20,13 @@ Suite: green (38 tests, 149 assertions). Browser drive: `drive.mjs`, two indepen
 
 ## Verdict round 1 (human): FAIL
 F1 (major, test-only) + F2 (major, coverage gap) + F3 (major, cross-cutting crash bug, also affects already-merged ticket 005 code) → plan steps 5–7.
+
+## Re-review (after fix cycles 5–7)
+- **F1 fixed** — assertion now targets `.phase-badge` element specifically; confirmed still green (real behavior, not a coincidental text match).
+- **F2 fixed** — added the missing happy-path own-resource destroy test; born green (`#destroy` was already correct from step 1).
+- **F3 fixed** — `ApplicationController` gets a shared `rescue_from ArgumentError → 400`, covering every enum in the app. New test proves `ResourcesController#create` no longer 500s on `resource_type: "garbage"`. **Manually verified the same fix also protects `GoalsController#create`** against ticket 005's identical (previously unnoticed) `status:` crash — confirmed via a scratch integration test, not committed, since Goal is outside ticket 006's stated scope; worth a note for whoever picks up the dashboard ticket (#17), which also touches Goal.
+- Suite: 40 tests, 159 assertions, 0 failures. Full drive re-run: all 8 checks PASS, unchanged from round 1 (nothing regressed).
+- Scope note: no fresh reviewer fan-out for the re-review — the 3-commit delta implements exactly the reviewers' own findings.
+
+## Verdict round 2 (human's call)
+Recommendation: **PASS** — all 4 criteria verified by strengthened tests and a real two-account browser drive; the cross-cutting crash bug (which predates this ticket) is closed for both models it affects.
