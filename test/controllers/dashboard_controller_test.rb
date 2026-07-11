@@ -49,4 +49,19 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_select "td", text: "2026-26"
     assert_select "td", text: "0.5" # 30 minutes = 0.5 hours
   end
+
+  test "excludes other users' goals and sessions from every aggregation" do
+    other_goal = users(:two).goals.create!(title: "Not yours", status: "done")
+    other_goal.learning_sessions.create!(date: Date.today, duration: 999, tags: "not-yours-tag")
+
+    get dashboard_path
+
+    assert_response :success
+    assert_no_match "Not yours", response.body
+    assert_no_match "not-yours-tag", response.body
+    # "done" as a status could theoretically appear if OUR user also had a
+    # done goal (they don't, in this test) — assert the count specifically
+    # isn't inflated by the other user's row.
+    assert_select "td", text: "done", count: 0
+  end
 end
