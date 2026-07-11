@@ -22,4 +22,18 @@ class AiInsightsControllerTest < ActionDispatch::IntegrationTest
     get goal_path(goal)
     assert_match "You spent 45 minutes reading the guides.", response.body
   end
+
+  test "generates and persists 2-3 next steps as a list" do
+    goal = users(:one).goals.create!(title: "Learn Rails", status: "planned")
+
+    stub_class_method(AiInsightService, :next_steps, "Read Action View guide\nBuild a small CRUD app\nWrite tests for it") do
+      post suggest_next_steps_goal_path(goal)
+    end
+
+    assert_redirected_to goal
+    assert_equal 3, goal.reload.ai_next_steps.lines.count
+
+    get goal_path(goal)
+    assert_select ".ai-next-steps li", 3
+  end
 end
