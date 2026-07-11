@@ -32,6 +32,15 @@
         width, views own content). max-w-2xl keeps text lines readable on
         wide screens; without this wrapper content stretches edge-to-edge. %>
     <main class="container mx-auto max-w-2xl px-4 py-10">
+      <%# Rendered globally, not per-page: any controller can now
+          redirect_to ..., alert: "..." (e.g. AiInsightsController on a
+          failed AI call) and the user actually sees it, wherever they land. %>
+      <% if flash[:alert] %>
+        <p class="form-errors mb-6"><%= flash[:alert] %></p>
+      <% end %>
+      <% if flash[:notice] %>
+        <p class="phase-badge mb-6"><%= flash[:notice] %></p>
+      <% end %>
       <%= yield %>
     </main>
   </body>

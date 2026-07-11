@@ -41,6 +41,10 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.2"
 
 group :development, :test do
+  # Loads .env into ENV (gitignored, never committed) so the OpenAI API
+  # key isn't hardcoded anywhere in source — see app/services/ai_insight_service.rb.
+  gem "dotenv-rails"
+
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
