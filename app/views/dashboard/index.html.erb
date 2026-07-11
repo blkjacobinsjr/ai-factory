@@ -27,4 +27,16 @@
   </tbody>
 </table>
 
+<h2 class="mb-3 text-lg font-semibold text-gray-900">Hours by week</h2>
+<table class="mb-8 w-full text-sm">
+  <tbody>
+    <% @minutes_by_week.each do |week, minutes| %>
+      <tr class="border-b border-gray-100">
+        <td class="py-2 text-gray-700"><%= week %></td>
+        <td class="py-2 text-right font-medium"><%= (minutes / 60.0).round(2) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
 <%= link_to "Back to goals", goals_path, class: "btn-ghost" %>

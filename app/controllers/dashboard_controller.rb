@@ -9,5 +9,9 @@ class DashboardController < ApplicationController
     # exact stored string, not by individual tag word within a multi-tag
     # session (documented tradeoff, see ticket 008's out-of-scope note).
     @minutes_by_tag = Current.user.learning_sessions.group(:tags).sum(:duration)
+    # SQLite-specific date truncation (this app's only DB) — the standard,
+    # minimal way to group by week without adding the groupdate gem.
+    # %W = week number, Monday-first, confirmed via a direct SQL check.
+    @minutes_by_week = Current.user.learning_sessions.group("strftime('%Y-%W', date)").sum(:duration)
   end
 end

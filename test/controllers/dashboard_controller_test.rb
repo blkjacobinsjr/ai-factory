@@ -34,4 +34,19 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_select "td", text: "testing"
     assert_select "td", text: "0.75" # 45 minutes = 0.75 hours
   end
+
+  test "shows total hours per week" do
+    goal = users(:one).goals.create!(title: "Learn Rails", status: "planned")
+    # Two dates in the same ISO week, one in a different week.
+    goal.learning_sessions.create!(date: Date.new(2026, 7, 6), duration: 60)
+    goal.learning_sessions.create!(date: Date.new(2026, 7, 8), duration: 60)
+    goal.learning_sessions.create!(date: Date.new(2026, 6, 29), duration: 30)
+
+    get dashboard_path
+
+    assert_select "td", text: "2026-27"
+    assert_select "td", text: "2.0" # 120 minutes = 2 hours
+    assert_select "td", text: "2026-26"
+    assert_select "td", text: "0.5" # 30 minutes = 0.5 hours
+  end
 end
