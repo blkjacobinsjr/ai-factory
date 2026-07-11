@@ -51,4 +51,23 @@ class AiInsightsControllerTest < ActionDispatch::IntegrationTest
     follow_redirect!
     assert_select ".form-errors", /could not reach the AI provider/
   end
+
+  test "blocks AI actions on another user's goal with 404, no AI call made" do
+    other_goal = users(:two).goals.create!(title: "Not yours", status: "planned")
+
+    # If the scoping were wrong and this got called at all, raising here
+    # fails the test loudly — proving no AI call happens, not just that
+    # the eventual response is a 404.
+    called_unexpectedly = -> (*) { raise "AI service must not be called for another user's goal" }
+
+    stub_class_method(AiInsightService, :summarize, called_unexpectedly) do
+      post generate_summary_goal_path(other_goal)
+      assert_response :not_found
+    end
+
+    stub_class_method(AiInsightService, :next_steps, called_unexpectedly) do
+      post suggest_next_steps_goal_path(other_goal)
+      assert_response :not_found
+    end
+  end
 end
