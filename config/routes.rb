@@ -26,6 +26,9 @@ Rails.application.routes.draw do
     resources :learning_sessions, only: [:create, :destroy], shallow: true
     resources :resources, only: [:create, :destroy], shallow: true
 
+    # Member routes so the URL still carries the goal id (unlike the
+    # shallow routes above) — AiInsightsController needs it to scope via
+    # Current.user.goals.find before ever calling the AI service.
     member do
       post :generate_summary, to: "ai_insights#generate_summary"
       post :suggest_next_steps, to: "ai_insights#suggest_next_steps"
