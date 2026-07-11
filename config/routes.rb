@@ -35,6 +35,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get "dashboard" => "dashboard#index"
+
   # The goals index is the homepage.
   root "goals#index"
 end
