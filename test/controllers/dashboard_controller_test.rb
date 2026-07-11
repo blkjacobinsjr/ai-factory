@@ -57,7 +57,9 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     get dashboard_path
 
     assert_response :success
-    assert_no_match "Not yours", response.body
+    # No goal-title assertion here — the dashboard never renders a title
+    # (only status/tags/week), so that check would pass vacuously
+    # regardless of scoping (review finding, ticket 008).
     assert_no_match "not-yours-tag", response.body
     # "done" as a status could theoretically appear if OUR user also had a
     # done goal (they don't, in this test) — assert the count specifically
