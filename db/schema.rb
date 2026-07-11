@@ -10,8 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_10_222820) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_11_165502) do
   create_table "goals", force: :cascade do |t|
+    t.text "ai_next_steps"
+    t.text "ai_summary"
     t.datetime "created_at", null: false
     t.text "description"
     t.integer "status", default: 0, null: false

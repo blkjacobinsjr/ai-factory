@@ -7,6 +7,32 @@
   <%= link_to "Edit", edit_goal_path(@goal), class: "btn-ghost" %>
 </div>
 
+<h2 class="mb-3 text-lg font-semibold text-gray-900">AI insights</h2>
+<div class="mb-6 space-y-3">
+  <% if @goal.ai_summary.present? %>
+    <div class="card flex-col items-start gap-1">
+      <span class="label">Summary</span>
+      <p class="text-sm text-gray-700"><%= @goal.ai_summary %></p>
+    </div>
+  <% end %>
+  <% if @goal.ai_next_steps.present? %>
+    <div class="card flex-col items-start gap-1">
+      <span class="label">Next steps</span>
+      <%# One step per line, stored as plain text — same pattern as
+          Resource's resource_type / Profile's focus_areas, no separate model. %>
+      <ol class="ai-next-steps list-inside list-decimal text-sm text-gray-700">
+        <% @goal.ai_next_steps.each_line(chomp: true) do |step| %>
+          <li><%= step %></li>
+        <% end %>
+      </ol>
+    </div>
+  <% end %>
+  <div class="flex gap-2">
+    <%= button_to "Generate summary", generate_summary_goal_path(@goal), method: :post, class: "btn-ghost" %>
+    <%= button_to "Suggest next steps", suggest_next_steps_goal_path(@goal), method: :post, class: "btn-ghost" %>
+  </div>
+</div>
+
 <h2 class="mb-3 text-lg font-semibold text-gray-900">Learning sessions</h2>
 <ul class="mb-6 space-y-3">
   <% @learning_sessions.each do |session| %>
