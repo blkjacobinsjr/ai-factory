@@ -36,4 +36,19 @@ class AiInsightsControllerTest < ActionDispatch::IntegrationTest
     get goal_path(goal)
     assert_select ".ai-next-steps li", 3
   end
+
+  test "shows a clear error and saves nothing when the AI provider fails" do
+    goal = users(:one).goals.create!(title: "Learn Rails", status: "planned")
+
+    raise_error = -> (*) { raise AiInsightService::Error, "could not reach the AI provider: timeout" }
+    stub_class_method(AiInsightService, :summarize, raise_error) do
+      post generate_summary_goal_path(goal)
+    end
+
+    assert_redirected_to goal
+    assert_nil goal.reload.ai_summary
+
+    follow_redirect!
+    assert_select ".form-errors", /could not reach the AI provider/
+  end
 end
