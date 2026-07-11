@@ -5,7 +5,16 @@
 #
 # send_request is the ONLY method that touches the network — tests stub
 # either the public methods (summarize/next_steps) or, for the error-
-# handling path, this one method, since this app has no webmock/vcr.
+# handling path, this one method, since this app has no webmock/vcr. That
+# means NOTHING in the automated suite ever actually loads Net::HTTP — a
+# missing require here only surfaced via a real API call during review
+# (bin/rails runner, fresh process: NameError: uninitialized constant
+# Net::HTTP). A narrow automated test for "is Net::HTTP required" would be
+# unreliable — Rails may load it transitively elsewhere in the full test
+# process regardless of whether THIS file's require does anything.
+require "net/http"
+require "json"
+
 class AiInsightService
   # Raised for anything that goes wrong talking to the AI provider —
   # network failure, non-success HTTP response, or an unparseable reply.
