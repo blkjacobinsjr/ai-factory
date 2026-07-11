@@ -12,4 +12,19 @@
   </tbody>
 </table>
 
+<h2 class="mb-3 text-lg font-semibold text-gray-900">Hours by tag</h2>
+<table class="mb-8 w-full text-sm">
+  <tbody>
+    <%# duration is stored in minutes; the SQL sums minutes, this line just
+        formats the already-aggregated total as hours for display — no
+        per-record Ruby loop, the grouping/summing is 100% ActiveRecord. %>
+    <% @minutes_by_tag.each do |tags, minutes| %>
+      <tr class="border-b border-gray-100">
+        <td class="py-2 text-gray-700"><%= tags %></td>
+        <td class="py-2 text-right font-medium"><%= (minutes / 60.0).round(2) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
 <%= link_to "Back to goals", goals_path, class: "btn-ghost" %>

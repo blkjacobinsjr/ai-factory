@@ -20,4 +20,18 @@ class DashboardControllerTest < ActionDispatch::IntegrationTest
     assert_select "td", text: "in_progress"
     assert_select "td", text: "1"
   end
+
+  test "shows total hours per tags value" do
+    goal = users(:one).goals.create!(title: "Learn Rails", status: "planned")
+    goal.learning_sessions.create!(date: Date.today, duration: 60, tags: "rails")
+    goal.learning_sessions.create!(date: Date.today, duration: 30, tags: "rails")
+    goal.learning_sessions.create!(date: Date.today, duration: 45, tags: "testing")
+
+    get dashboard_path
+
+    assert_select "td", text: "rails"
+    assert_select "td", text: "1.5" # 90 minutes = 1.5 hours
+    assert_select "td", text: "testing"
+    assert_select "td", text: "0.75" # 45 minutes = 0.75 hours
+  end
 end
