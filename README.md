@@ -22,3 +22,11 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+## Global agent rules
+
+`.claude/rules/*.md` apply to this repo. To make them apply to every Claude Code session on a machine, link them into the global config once:
+
+```sh
+mkdir -p ~/.claude/rules && ln -sf "$PWD/.claude/rules/token-economy.md" ~/.claude/rules/token-economy.md
+```
