@@ -38,3 +38,8 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+# env files in any folder
+.env
+.env.*
+!.env.example

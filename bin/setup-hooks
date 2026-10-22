@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# Installs the gitleaks pre-commit hook so secrets are blocked before they're committed.
+set -e
+command -v pre-commit >/dev/null 2>&1 || pipx install pre-commit || pip install --user pre-commit
+pre-commit install
+echo "gitleaks pre-commit hook installed."
