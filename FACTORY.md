@@ -1,6 +1,6 @@
 # The AI Factory — refined with Goldratt · Grove · Gawande · Boyd
 
-A single Claude session follows instructions *probabilistically*. The factory makes the process hold anyway: **skills** own the phases, **rules** own the discipline, **hooks** own enforcement (deterministic bash, zero tokens), **sub-agents** own parallel research and independent verification. The human owns every text.
+A single Claude session follows instructions *probabilistically*. The factory makes the process hold anyway: **skills** own the phases, **rules** own the discipline, **hooks** own enforcement (deterministic bash, zero tokens), **sub-agents** own parallel research (cheap model) and independent verification (big model — judgment never gets downgraded). The human owns every text.
 
 ## Pipeline
 ```
@@ -12,10 +12,10 @@ State lives in `.factory/state`; artifacts in `work/<id>/`. A fresh session read
 ## Lifecycle (H=human · M=model · SA=sub-agents · 🔒=hook)
 1. H: `/refine-ticket "<rough idea>"`
 2. M drafts test-verifiable acceptance criteria → **H approves ticket.md** → branch + phase=refined 🔒
-3. H: `/plan-ticket` → SA fan-out ×3 (patterns/tests/data, one parallel batch) → plan: 1 step = 1 criterion = 1 TDD cycle → **H approves plan.md** → phase=planned
+3. H: `/plan-ticket` → SA fan-out ×3 (pattern/test/data scouts on Haiku, one parallel batch) → plan: 1 step = 1 criterion = 1 TDD cycle → **H approves plan.md** → phase=planned
 4. H: `/tdd-implement` → red→green→commit per step; 🔒 suite runs on every edit, red commits blocked, can't end turn red
-5. H: `/final-review` → SA fan-out ×2 (code-reviewer, security-reviewer, read-only) + Playwright drives each criterion in the real browser → review.md with evidence → **H owns the verdict**
-6. PASS 🔒opens push → PR + link + plain-English briefing → H merges → metrics row → phase=idle
+5. H: `/final-review` → SA fan-out ×2 (code-reviewer, security-reviewer, read-only, on the parent's big model) + Playwright drives each criterion in the real browser → review.md with evidence → **H owns the verdict**
+6. PASS 🔒opens push → PR + link + plain-English briefing + `script/token-report` table → H merges → metrics row (incl. delegation) → phase=idle
 
 ## What the books changed
 - **The Goal:** the human is the bottleneck — "an hour lost at a bottleneck" is lost to the whole system. WIP caps (≤3 refined, ≤1 implementing); while the human reviews, the factory refines/plans the next ticket, never implements. Measure throughput × review-fail-rate, not activity.

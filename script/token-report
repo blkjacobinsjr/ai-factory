@@ -1,0 +1,95 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# What: tallies Claude Code token usage from ~/.claude/projects transcripts
+#       (main thread + sub-agent sidechains) and reports how much of the
+#       non-judgment work ran on the big model.
+# Why:  the factory delegates research to cheap sub-agents and keeps judgment
+#       (orchestration verdicts, code/security review) on the big model. This
+#       makes that split measurable for .factory/metrics.md.
+# Risk: transcript format is Claude Code-internal and may change; unknown lines
+#       are skipped, never fatal. Read-only — prints a report, writes nothing.
+#
+# Usage: script/token-report [--all] [--since ISO-TIME] [--dir PATH]
+#   e.g. --since "$(git log --diff-filter=A --format=%cI -- work/<id>/ticket.md | tail -1)"
+#   default scope: this repo's project dir (~/.claude/projects/<cwd with / -> ->)
+# Env:   FACTORY_BIG_MODEL      regex for the big model     (default: opus)
+#        FACTORY_JUDGMENT_AGENTS comma list of judgment sub-agents
+#                                (default: code-reviewer,security-reviewer)
+#        FACTORY_WEAK_SHARE     % threshold for "delegation: weak" (default: 70)
+# Tokens = input + cache writes + output; cache reads shown separately (cheap,
+# and they would swamp everything else).
+
+require "json"
+require "optparse"
+require "time"
+
+root = File.expand_path("~/.claude/projects")
+opts = { dir: File.join(root, Dir.pwd.tr("/.", "--")) }
+OptionParser.new do |o|
+  o.on("--all") { opts[:dir] = root }
+  o.on("--dir PATH") { |v| opts[:dir] = File.expand_path(v) }
+  o.on("--since TIME") { |v| opts[:since] = Time.parse(v) unless v.strip.empty? }
+end.parse!
+
+big = Regexp.new(ENV.fetch("FACTORY_BIG_MODEL", "opus"))
+judgment = ENV.fetch("FACTORY_JUDGMENT_AGENTS", "code-reviewer,security-reviewer").split(",")
+weak_at = ENV.fetch("FACTORY_WEAK_SHARE", "70").to_f
+
+files = Dir.glob(File.join(opts[:dir], "**", "*.jsonl"))
+abort "no transcripts under #{opts[:dir]} (try --all)" if files.empty?
+
+rows = Hash.new { |h, k| h[k] = Hash.new(0) } # [model, lane] => counters
+prompt_type = {}  # Task prompt text => subagent_type (from main threads)
+entries = files.flat_map do |f|
+  File.foreach(f).filter_map { |l| JSON.parse(l) rescue nil }.map { |e| [f, e] }
+end
+
+entries.each do |_, e|
+  next unless e["type"] == "assistant" && !e["isSidechain"]
+  Array(e.dig("message", "content")).each do |c|
+    next unless c.is_a?(Hash) && c["type"] == "tool_use" && %w[Task Agent].include?(c["name"])
+    prompt_type[c.dig("input", "prompt").to_s.strip] = c.dig("input", "subagent_type") || "general-purpose"
+  end
+end
+
+seen = {}
+chain_type = {} # file/agentId => subagent_type
+entries.each do |f, e|
+  next if opts[:since] && (Time.parse(e["timestamp"].to_s) rescue opts[:since]) < opts[:since]
+  key = e["agentId"] || f
+  if e["isSidechain"] && e["type"] == "user" && !chain_type[key]
+    text = e.dig("message", "content")
+    text = text.map { |c| c["text"] if c.is_a?(Hash) }.join if text.is_a?(Array)
+    chain_type[key] = prompt_type.fetch(text.to_s.strip, "unknown")
+  end
+  next unless e["type"] == "assistant" && (u = e.dig("message", "usage"))
+  id = [e.dig("message", "id"), e["requestId"]].join("/")
+  next if seen[id]
+  seen[id] = true
+
+  lane = e["isSidechain"] ? "sub" : "main"
+  lane = "judgment" if lane == "sub" && judgment.include?(chain_type[key])
+  r = rows[[e.dig("message", "model").to_s, lane]]
+  r[:tokens] += u["input_tokens"].to_i + u["cache_creation_input_tokens"].to_i + u["output_tokens"].to_i
+  r[:cache_read] += u["cache_read_input_tokens"].to_i
+end
+rows.delete_if { |(model, _), _| model == "<synthetic>" || model.empty? }
+
+fmt = ->(n) { n.to_s.reverse.scan(/\d{1,3}/).join(",").reverse }
+puts "| model | lane | tokens | cache read |", "|---|---|---|---|"
+rows.sort_by { |_, r| -r[:tokens] }.each do |(model, lane), r|
+  puts "| #{model} | #{lane} | #{fmt[r[:tokens]]} | #{fmt[r[:cache_read]]} |"
+end
+
+# Non-judgment = main thread + research/other sub-agents. Reviewers are
+# judgment by design (rule: they stay on the big model) so they don't count.
+nj = rows.reject { |(_, lane), _| lane == "judgment" }
+total = nj.sum { |_, r| r[:tokens] }
+big_t = nj.sum { |(model, _), r| model.match?(big) ? r[:tokens] : 0 }
+share = total.zero? ? 0.0 : 100.0 * big_t / total
+sub = rows.sum { |(_, lane), r| lane == "main" ? 0 : r[:tokens] }
+all = rows.sum { |_, r| r[:tokens] }
+puts
+puts "main vs subagent: #{fmt[all - sub]} / #{fmt[sub]}"
+puts "big-model share of non-judgment tokens: #{share.round}% — delegation: #{share > weak_at ? 'weak' : 'ok'}"
