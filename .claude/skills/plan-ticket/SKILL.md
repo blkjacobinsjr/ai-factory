@@ -8,10 +8,10 @@ description: Research the codebase with parallel sub-agents, then write a TDD pl
 **Precondition:** phase=refined and `work/<id>/ticket.md` exists (id from state). Else stop, name the correct skill.
 
 ## Steps (READ-DO)
-1. **Fan-out — one message, 3 Explore agents in parallel** (never sequential):
-   - existing patterns: controllers/models/views relevant to the ticket
-   - test conventions: how tests in `test/` are structured, fixtures, helpers
-   - data layer: schema, migrations, associations touched by the ticket
+1. **Fan-out — one message, 3 scout agents in parallel** (never sequential; pinned to Haiku — research is not judgment):
+   - `pattern-scout`: controllers/models/views relevant to the ticket
+   - `test-scout`: how tests in `test/` are structured, fixtures, helpers
+   - `data-scout`: schema, migrations, associations touched by the ticket
 2. Write `work/<id>/plan.md`:
    - **Criteria (verbatim)** — copy acceptance criteria word-for-word from ticket.md (Gawande read-back; drift here is a defect).
    - **Steps** — one step per criterion, in dependency order. Each step: test file + test name → expected failure → minimal implementation sketch (files touched) → commit message.
