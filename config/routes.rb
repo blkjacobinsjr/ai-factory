@@ -8,7 +8,7 @@ Rails.application.routes.draw do
 
   # Singular, no :id — there is no URL to edit to request someone else's
   # profile. Current.user makes the scoping structural, not a runtime check.
-  resource :profile, only: [:show]
+  resource :profile, only: [ :show ]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -23,8 +23,8 @@ Rails.application.routes.draw do
     # shallow: true keeps destroy at /learning_sessions/:id (and
     # /resources/:id below) — no goal_id in that URL, so there's no path
     # shape that could even be pointed at a record under someone else's goal.
-    resources :learning_sessions, only: [:create, :destroy], shallow: true
-    resources :resources, only: [:create, :destroy], shallow: true
+    resources :learning_sessions, only: [ :create, :destroy ], shallow: true
+    resources :resources, only: [ :create, :destroy ], shallow: true
 
     # Member routes so the URL still carries the goal id (unlike the
     # shallow routes above) — AiInsightsController needs it to scope via

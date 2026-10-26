@@ -10,7 +10,7 @@ module StubHelper
     # — without tracking this, every use of this helper on a private class
     # method permanently leaks it public for the rest of the test process.
     was_private = klass.singleton_class.private_method_defined?(method_name)
-    replacement = value_or_callable.respond_to?(:call) ? value_or_callable : -> (*) { value_or_callable }
+    replacement = value_or_callable.respond_to?(:call) ? value_or_callable : ->(*) { value_or_callable }
     klass.define_singleton_method(method_name, &replacement)
     yield
   ensure

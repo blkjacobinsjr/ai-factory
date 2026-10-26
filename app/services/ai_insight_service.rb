@@ -84,7 +84,7 @@ class AiInsightService
       "Content-Type" => "application/json",
       "Authorization" => "Bearer #{ENV.fetch('OPENAI_API_KEY')}"
     })
-    request.body = { model: MODEL, messages: [{ role: "user", content: prompt }], max_tokens: 300 }.to_json
+    request.body = { model: MODEL, messages: [ { role: "user", content: prompt } ], max_tokens: 300 }.to_json
     http.request(request)
   rescue StandardError => e
     # Any network-level failure (timeout, DNS, connection refused) — wrap

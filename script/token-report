@@ -42,7 +42,7 @@ abort "no transcripts under #{opts[:dir]} (try --all)" if files.empty?
 rows = Hash.new { |h, k| h[k] = Hash.new(0) } # [model, lane] => counters
 prompt_type = {}  # Task prompt text => subagent_type (from main threads)
 entries = files.flat_map do |f|
-  File.foreach(f).filter_map { |l| JSON.parse(l) rescue nil }.map { |e| [f, e] }
+  File.foreach(f).filter_map { |l| JSON.parse(l) rescue nil }.map { |e| [ f, e ] }
 end
 
 entries.each do |_, e|
@@ -64,13 +64,13 @@ entries.each do |f, e|
     chain_type[key] = prompt_type.fetch(text.to_s.strip, "unknown")
   end
   next unless e["type"] == "assistant" && (u = e.dig("message", "usage"))
-  id = [e.dig("message", "id"), e["requestId"]].join("/")
+  id = [ e.dig("message", "id"), e["requestId"] ].join("/")
   next if seen[id]
   seen[id] = true
 
   lane = e["isSidechain"] ? "sub" : "main"
   lane = "judgment" if lane == "sub" && judgment.include?(chain_type[key])
-  r = rows[[e.dig("message", "model").to_s, lane]]
+  r = rows[[ e.dig("message", "model").to_s, lane ]]
   r[:tokens] += u["input_tokens"].to_i + u["cache_creation_input_tokens"].to_i + u["output_tokens"].to_i
   r[:cache_read] += u["cache_read_input_tokens"].to_i
 end
